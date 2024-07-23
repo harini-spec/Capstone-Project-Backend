@@ -4,76 +4,65 @@
 ```
 Enums:
 
-ENUM Metric_Type    - Blood_Pressure_Diastolic, Blood_Pressure_Systolic, Sugar_level, Water_Intake, Steps_Count, Sleep_hours, Height, Weight, Calories_Intake, Calories_Burned
-
-ENUM Range_category - Weight, Height, Age
-
-ENUM Health_status  - Excellent, Good, Fair, Poor, Critical
+ENUM Health_status  - Good, Fair, Poor
 
 ENUM Target_status  - Ongoing, Achieved, Not_Achieved
 
-ENUM Role           - User, Coach 
+ENUM Role           - User, Coach, Admin
 
 ENUM User_status    - Active, Inactive
 
 ENUM Gender         - Female, Male, Others
 ```
+### Common:
+- **User Details:** [ID], Password Hash, Password encrypted, Status (for soft delete), created_at, updated_at
+- **User:** [User Detail ID], Name, Age, Gender, Phone, Email ID, Role, created_at, updated_at
+
 ### For User:
-- **User Details:** [ID], Password Hash, Password encrypted, Status (for soft delete)
-- **User:** [User Detail ID], Name, Age, Gender, Phone, Email ID, notification permission
-- **User Preferences:** [ID], User ID, Metric Type (enum)
-- **Units:** [ID], Metric_Type, unit 
-- **Target:** [ID], Preference ID, Target Min Value, Target Max Value, Unit ID, status, start date, end date, datetime 
-- **Health Log:** [ID], Preference ID, value, unit ID, date, Heath status
-- **Ideal data:** [ID], Health status, Gender, Metric_Type, Weight_Range, Height_Range, Age_Range, Min_val, Max_val, unit ID 
-- **Metric_Ranges:** [ID], Category, Min_val, Max_val, unit ID 
+- **User Preferences:** [ID], User ID, Metric ID, created_at, updated_at
+- **Metrics:** [ID], Metric_Type, Unit, created_at, updated_at
+- **Target:** [ID], Preference ID, Target Min Value, Target Max Value, status, start date, end date, created_at, updated_at 
+- **Health Log:** [ID], Preference ID, value, Heath status, created_at, updated_at
+- **Ideal data:** [ID], Health status, Metric Id, Min_val, Max_val, created_at, updated_at 
 
 ### For health coach:
-- **Coach:** [User Detail ID], Name, Age, Gender, Phone, Email ID, Certificate, Trustability score
-- **Monitor Preferences:** [ID], Coach ID, Metric Type (enum)
-- **Suggestions:** [ID], Coach ID, Health Log ID, Suggestion, Date, is_like
+- **Monitor Preferences:** [ID], User ID, Metric Id, created_at, updated_at 
+- **Suggestions:** [ID], User ID, Health Log ID, Suggestion, is_like, created_at, updated_at 
 
 ## Endpoints:
-### User:
-
-`POST/Register user`
-- Fill User and UserDetails table 
+### Common:
+`POST/Register user or coach`
+- Fill User and UserDetails table, get height and weight too
+- Fill in health log
+- user always active, coach - inactive
 - O/P: User ID 
 
-`POST/Add and Update Height`
-- I/P: Get height - add to health log (no checking needed)
-- O/P: Msg - successfully added 
-        
-`POST/Add and Update Weight` 
-- I/P: Get weight - add to health log (no checking needed)
-- O/P: Msg - successfully added 
-        
+`POST/Login user or coach` 
+- I/P: Email, Password 
+- check if user active
+- O/P: Msg - successfully logged in
+
+### User:
 `POST/User Preferences` 
 - I/P: Metric list
-- Get user ID from localstorage (stored after register) 
+- Get user ID from token 
 - Add them to User Preferences table one by one 
-- O/P: Msg - successfully added
-
-`POST/Login` 
-- I/P: Email, Password 
-- O/P: Msg - successfully logged in 
+- O/P: Msg - successfully added 
 
 `POST/Health log`
-- I/P: Health log data - category, value, unit, date 
-- Find preference ID 
+- I/P: value, metric
+- Metric ID, User Id - user preference ID 
 - Check if log already added for today i.e., check if preference id and today's date are present already 
     - If so, send error - Already added
 
 - Check data value against ideal value 
-    - Get weight, height, age range IDs from values 
-    - Metric type and gender use - Get the ideal value record 
-    - Get the health status 
-    - Add health status
+    - Update the health status by comparing with ideal val table
     - Add to output DTO
 
 - Check data value against target if any set 
-    - Preference ID, start date, end date - recent datetime (latest in that range) - using this find target data 
-    - Check if value inside target range 
+    - Preference ID, start date, end date - recent datetime (latest in that range) - using this find target data GET/Target endpoint
+    - Check if value inside target range
+    - update target status 
     - Add target status to Output DTO
 
 - Add to health log 
@@ -132,20 +121,11 @@ ENUM Gender         - Female, Male, Others
 - O/P: Msg - Successfully updated 
 
 ### Coach:
-`POST/Register user`
-- Fill User and UserDetails table 
-- O/P: User ID 
-
 `POST/Coach monitor Preferences` 
 - I/P: Metric list
 - Get user ID from localstorage (stored after register) 
 - Add them to User Preferences table one by one 
 - O/P: Msg - successfully added
-
-`POST/Login` 
-- I/P: Email, Password 
-- Check if user active 
-- O/P: Msg - successfully logged in 
 
 `GET/Problems`
 - I/P: -

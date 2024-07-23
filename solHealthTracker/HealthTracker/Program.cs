@@ -1,3 +1,4 @@
+using HealthTracker.Models;
 using HealthTracker.Models.DBModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,6 @@ namespace HealthTracker
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddLogging(l => l.AddLog4Net());
             builder.Services.AddSwaggerGen(option =>
             {
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
@@ -71,9 +71,9 @@ namespace HealthTracker
             #endregion
 
             #region contexts
-            //builder.Services.AddDbContext<BusBookingContext>(
-            //   options => options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection"))
-            //   );
+            builder.Services.AddDbContext<HealthTrackerContext>(
+               options => options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection"))
+               );
             #endregion
 
             #region repositories

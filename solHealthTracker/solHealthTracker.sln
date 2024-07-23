@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthTracker", "HealthTracker\HealthTracker.csproj", "{D17D7495-C172-4A5E-AAE7-814DE9EA30EB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthTrackerTest", "HealthTrackerTest\HealthTrackerTest.csproj", "{2E7190D6-A50A-4C7D-8888-66EF18CBB10F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{D17D7495-C172-4A5E-AAE7-814DE9EA30EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D17D7495-C172-4A5E-AAE7-814DE9EA30EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D17D7495-C172-4A5E-AAE7-814DE9EA30EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E7190D6-A50A-4C7D-8888-66EF18CBB10F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E7190D6-A50A-4C7D-8888-66EF18CBB10F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E7190D6-A50A-4C7D-8888-66EF18CBB10F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E7190D6-A50A-4C7D-8888-66EF18CBB10F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
