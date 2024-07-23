@@ -4,7 +4,7 @@ Models:
     For User:
         User Details: [ID], Password Hash, Password encrypted, Status (for soft delete)
         User: [User Detail ID], Name, Age, Gender, Phone, Email ID, notification permission
-        User Preferences: [ID], User ID, Metric Type (enum)
+        User Preferences: [ID], User ID, Metric Type
 
         Units: [ID], Metric_Type, unit 
         
@@ -15,7 +15,7 @@ Models:
 
     For health coach:
         Coach: [User Detail ID], Name, Age, Gender, Phone, Email ID, Certificate, Trustability score
-        Monitor Preferences: [ID], Coach ID, Metric Type (enum)
+        Monitor Preferences: [ID], Coach ID, Metric Type
         Suggestions: [ID], Coach ID, Health Log ID, Suggestion, Date, like
 
     Enums:
