@@ -25,7 +25,7 @@ namespace ATMTest.Repositories
             context = new HealthTrackerContext(optionsBuilder.Options);
             suggestionRepo = new SuggestionRepository(context);
             await suggestionRepo.Add(new Suggestion
-            { Id = 1, CoachId = 1, UserId = 1, Description = "Walk more", IsLiked = true, Created_at = DateTime.Now, Updated_at = DateTime.Now });
+            { Id = 1, CoachId = 1, UserId = 1, Description = "Walk more",Created_at = DateTime.Now, Updated_at = DateTime.Now });
         }
 
         [TearDown]
@@ -40,7 +40,7 @@ namespace ATMTest.Repositories
         {
             // Action
             var result = await suggestionRepo.Add(new Suggestion
-            { Id = 2, CoachId = 1, UserId = 1, Description = "Walk more", IsLiked = true, Created_at = DateTime.Now, Updated_at = DateTime.Now });
+            { Id = 2, CoachId = 1, UserId = 1, Description = "Walk more", Created_at = DateTime.Now, Updated_at = DateTime.Now });
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -98,7 +98,7 @@ namespace ATMTest.Repositories
         {
             // Action
             var exception = Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => suggestionRepo.Update(new Suggestion
-            { Id = 100, CoachId = 1, UserId = 1, Description = "Walk more", IsLiked = true, Created_at = DateTime.Now, Updated_at = DateTime.Now }));
+            { Id = 100, CoachId = 1, UserId = 1, Description = "Walk more", Created_at = DateTime.Now, Updated_at = DateTime.Now }));
         }
 
 
@@ -107,7 +107,7 @@ namespace ATMTest.Repositories
         {
             // Arrange
             var entity = await suggestionRepo.Add(new Suggestion
-            { Id = 2, CoachId = 1, UserId = 1, Description = "Walk more", IsLiked = true, Created_at = DateTime.Now, Updated_at = DateTime.Now });
+            { Id = 2, CoachId = 1, UserId = 1, Description = "Walk more", Created_at = DateTime.Now, Updated_at = DateTime.Now });
             entity.Description = "Eat";
 
             // Action

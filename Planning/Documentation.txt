@@ -17,6 +17,11 @@
 - Add them to User Preferences table one by one 
 - O/P: Msg - successfully added 
 
+`GET/User Preference`
+- I/P: -
+- Get user ID from token 
+- O/P: List of user preferences
+
 `POST/Health log`
 - I/P: value, metric
 - Metric ID, User Id - user preference ID 
@@ -79,14 +84,8 @@
 `Get/Suggestions`
 - I/P: -
 - Get User ID from token 
-- Get health logs of user - check if those health log ids are present in suggestions 
+- suggestions for user
 - O/P: List of suggestions of user 
-
-`PUT/Update Coach Score`
-- I/P: Suggestion ID, is_like
-- Get coach ID and update to trustability score (add or minus) 
-- Update like to true or false
-- O/P: Msg - Successfully updated 
 
 ### Coach:
 `POST/Coach monitor Preferences` 
@@ -98,9 +97,9 @@
 `GET/Problems`
 - I/P: -
 - Get health logs 
-- Health logs with coach's suggestions as critical
-- If health log has no suggestions by coach, add to output dto  
-- O/P: list of health logs 
+- Health logs with status as critical
+- If health log has no suggestions by coach, add user id to output dto 
+- O/P: list of user ids
 
 `POST/Suggestions` 
 - I/P: User ID, Suggestion

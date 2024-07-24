@@ -16,7 +16,6 @@ namespace HealthTracker.Models.DBModels
         public User SuggestionForUser { get; set; }
 
         public string Description { get; set; }
-        public bool IsLiked { get; set; } = false;
         public DateTime Created_at { get; set; }
         public DateTime Updated_at { get; set; }
     }

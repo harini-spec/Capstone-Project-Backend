@@ -27,7 +27,7 @@ ENUM Gender         - Female, Male, Others
 
 ### For health coach:
 - **Monitor Preferences:** [ID], User ID, Metric Id, created_at, updated_at 
-- **Suggestions:** [ID], User ID, Coach ID, Suggestion, is_like, created_at, updated_at 
+- **Suggestions:** [ID], User ID, Coach ID, Suggestion, created_at, updated_at 
 
 ## Endpoints:
 ### Common:
@@ -48,6 +48,11 @@ ENUM Gender         - Female, Male, Others
 - Get user ID from token 
 - Add them to User Preferences table one by one 
 - O/P: Msg - successfully added 
+
+`GET/User Preference`
+- I/P: -
+- Get user ID from token 
+- O/P: List of user preferences
 
 `POST/Health log`
 - I/P: value, metric
@@ -113,12 +118,6 @@ ENUM Gender         - Female, Male, Others
 - Get User ID from token 
 - suggestions for user
 - O/P: List of suggestions of user 
-
-`PUT/Update Coach Score`
-- I/P: Suggestion ID, is_like
-- Get coach ID and update to trustability score (add or minus) 
-- Update like to true or false
-- O/P: Msg - Successfully updated 
 
 ### Coach:
 `POST/Coach monitor Preferences` 
