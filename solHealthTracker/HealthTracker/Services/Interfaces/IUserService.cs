@@ -32,5 +32,9 @@ namespace HealthTracker.Services.Interfaces
         /// <returns>Login result DTO with JWT Token</returns>
         #endregion
         public Task<LoginOutputDTO> LoginUser(LoginInputDTO loginDTO);
+
+        public Task<User> GetUserById(int userId);
+
+        public Task UpdateUser(User user);
     }
 }

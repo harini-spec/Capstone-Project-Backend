@@ -145,6 +145,40 @@ namespace HealthTracker.Services.Classes
         #endregion
 
 
+        #region Update User
+
+        public async Task UpdateUser(User user)
+        {
+            try
+            {
+                await _userRepo.Update(user);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        #endregion
+
+
+        #region Get User By Id
+
+        public async Task<User> GetUserById(int Id)
+        {
+            try
+            {
+                return await _userRepo.GetById(Id);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        #endregion
+
+
         #region Mappers
 
         private LoginOutputDTO MapUserToLoginOutputDTO(User user)

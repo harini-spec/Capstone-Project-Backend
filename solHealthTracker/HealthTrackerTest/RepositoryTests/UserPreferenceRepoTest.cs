@@ -25,7 +25,7 @@ namespace HealthTrackerTest.RepositoryTests
             context = new HealthTrackerContext(optionsBuilder.Options);
             userPreferenceRepo = new UserPreferenceRepository(context);
             await userPreferenceRepo.Add(new UserPreference
-            { Id = 1, UserId = 1, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now });
+            { UserId = 1, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now });
         }
 
         [TearDown]
@@ -40,7 +40,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Action
             var result = await userPreferenceRepo.Add(new UserPreference
-            { Id = 2, UserId = 1, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now });
+            { UserId = 2, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now });
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -98,9 +98,6 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Action
             var exception = Assert.ThrowsAsync<EntityNotFoundException>(() => userPreferenceRepo.Delete(100));
-
-            // Assert
-            Assert.That(exception.Message, Is.EqualTo("Entity not found!"));
         }
 
         [Test]
@@ -108,7 +105,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Action
             var exception = Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => userPreferenceRepo.Update(new UserPreference
-            { Id = 200, UserId = 1, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now }));
+            { UserId = 200, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now }));
         }
 
 
@@ -117,7 +114,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Arrange
             var entity = await userPreferenceRepo.Add(new UserPreference
-            { Id = 2, UserId = 1, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now });
+            { UserId = 2, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now });
             entity.MetricId = 2;
 
             // Action

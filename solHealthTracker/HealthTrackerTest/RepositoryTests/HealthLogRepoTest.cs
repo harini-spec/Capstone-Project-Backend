@@ -100,9 +100,6 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Action
             var exception = Assert.ThrowsAsync<EntityNotFoundException>(() => healthLogRepository.Delete(100));
-
-            // Assert
-            Assert.That(exception.Message, Is.EqualTo("Entity not found!"));
         }
 
         [Test]

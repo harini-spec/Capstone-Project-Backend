@@ -27,7 +27,7 @@ namespace HealthTracker.Services.Classes
             var claims = new List<Claim>();
 
             // Add claims
-            var idProperty = typeof(T).GetProperty("Id");
+            var idProperty = typeof(T).GetProperty("UserId");
             if (idProperty != null)
             {
                 claims.Add(new Claim("ID", idProperty.GetValue(user).ToString()));

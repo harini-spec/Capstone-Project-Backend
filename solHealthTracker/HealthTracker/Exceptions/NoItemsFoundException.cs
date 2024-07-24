@@ -4,12 +4,12 @@ namespace HealthTracker.Exceptions
 {
     public class NoItemsFoundException : Exception
     {
+        public string msg;
         public NoItemsFoundException()
         {
+            msg = "No Items found!";
         }
 
-        public NoItemsFoundException(string? message) : base(message)
-        {
-        }
+        public override string Message => msg;
     }
 }

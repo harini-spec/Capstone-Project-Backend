@@ -18,6 +18,7 @@ namespace HealthTracker.Models.DBModels
         public string Phone { get; set; }
         public string Email { get; set; }
         public RolesEnum.Roles Role { get; set; }
+        public bool is_preferenceSet { get; set; } = false;
         public DateTime Created_at { get; set; }
         public DateTime Updated_at { get; set; }
 

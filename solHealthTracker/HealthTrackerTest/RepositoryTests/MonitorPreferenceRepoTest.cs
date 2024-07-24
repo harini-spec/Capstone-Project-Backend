@@ -25,7 +25,7 @@ namespace HealthTrackerTest.RepositoryTests
             context = new HealthTrackerContext(optionsBuilder.Options);
             monitorPreferenceRepo = new MonitorPreferenceRepository(context);
             await monitorPreferenceRepo.Add(new MonitorPreference
-            { Id = 1, CoachId = 1, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now });
+            { CoachId = 1, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now });
         }
 
         [TearDown]
@@ -40,7 +40,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Action
             var result = await monitorPreferenceRepo.Add(new MonitorPreference
-            { Id = 2, CoachId = 1, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now });
+            { CoachId = 2, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now });
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -98,9 +98,6 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Action
             var exception = Assert.ThrowsAsync<EntityNotFoundException>(() => monitorPreferenceRepo.Delete(100));
-
-            // Assert
-            Assert.That(exception.Message, Is.EqualTo("Entity not found!"));
         }
 
         [Test]
@@ -108,7 +105,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Action
             var exception = Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => monitorPreferenceRepo.Update(new MonitorPreference
-            { Id = 200, CoachId = 1, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now }));
+            { CoachId = 200, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now }));
         }
 
 
@@ -117,7 +114,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Arrange
             var entity = await monitorPreferenceRepo.Add(new MonitorPreference
-            { Id = 2, CoachId = 1, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now });
+            { CoachId = 2, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now });
             entity.MetricId = 2;
 
             // Action

@@ -1,19 +1,4 @@
-`GET/All Metrics` 
-- I/P: - 
-- O/P: List of metrics
-
 ### User:
-`POST/User Preferences` 
-    - I/P: Metric list
-    - Get user ID from token 
-    - Add them to User Preferences table one by one 
-    - O/P: Msg - successfully added 
-
-`GET/User Preference`
-    - I/P: -
-    - Get user ID from token 
-    - O/P: List of user preferences
-
 `POST/Health log`
     - I/P: value, metric
     - Metric ID, User Id - user preference ID 
@@ -37,7 +22,7 @@
     - I/P: Health log ID 
     - O/p: Health log data 
 
-`PUT/Update Health log` 
+`PUT/Update Health log` (update updated_at)
     - I/P: Health log ID, updated data 
     - Do ideal value check and target value check - update both status in the DTO 
     - O/P: output DTO: Ideal status, target status 
@@ -54,7 +39,7 @@
     - Get target data for current date between start and end date 
     - O/P: Target DTO 
 
-`PUT/Target`
+`PUT/Target` (update updated_at)
     - I/P: Target updated data 
     - O/P: Update and msg status based on ideal range 
 
@@ -80,14 +65,6 @@
     - O/P: List of suggestions of user 
 
 ### Coach:
-`POST/Coach monitor Preferences` 
-    - I/P: Metric list
-    - Get user ID from localstorage (stored after register) 
-    - Add them to User Preferences table one by one 
-    - O/P: Msg - successfully added
-
-`GET/Coach monitor preferences`
-
 `GET/Problems`
     - I/P: -
     - Get health logs 

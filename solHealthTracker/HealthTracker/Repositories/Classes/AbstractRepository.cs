@@ -39,7 +39,7 @@ namespace HealthTracker.Repositories
             T ob = await _dbSet.FindAsync(id);
             if (ob == null)
             {
-                throw new EntityNotFoundException("Entity not found!");
+                throw new EntityNotFoundException();
             }
             return ob;
         }

@@ -1,6 +1,6 @@
 use dbHealthTracker
 
-sp_help Users
+sp_help UserPreferences
 
 select * from Users 
 select * from UsersDetails
@@ -11,3 +11,6 @@ select * from Metrics
 select * from MonitorPreferences
 select * from Suggestions
 select * from Targets
+
+delete from MonitorPreferences
+delete from UserPreferences
