@@ -4,7 +4,7 @@ using HealthTracker.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace ATMApplication.Repositories
+namespace HealthTracker.Repositories
 {
     public abstract class AbstractRepository<K, T> : IRepository<K, T> where T : class
     {

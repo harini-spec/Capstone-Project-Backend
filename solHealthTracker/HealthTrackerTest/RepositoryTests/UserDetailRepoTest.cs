@@ -12,7 +12,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ATMTest.Repositories
+namespace HealthTrackerTest.RepositoryTests
 {
     public class UserDetailRepoTest
     {
