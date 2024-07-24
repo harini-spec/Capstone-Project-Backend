@@ -74,6 +74,16 @@ namespace HealthTrackerTest.RepositoryTests
         }
 
         [Test]
+        public async Task GetAllUserPreferencesFailTest()
+        {
+            // Arrange 
+            await userPreferenceRepo.Delete(1);
+
+            // Action
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(() => userPreferenceRepo.GetAll());
+        }
+
+        [Test]
         public async Task DeleteUserPreferenceByIdSuccessTest()
         {
             // Action

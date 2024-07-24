@@ -74,6 +74,16 @@ namespace HealthTrackerTest.RepositoryTests
         }
 
         [Test]
+        public async Task GetAllMetricsFailTest()
+        {
+            // Arrange 
+            await metricRepository.Delete(1);
+
+            // Action
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(() => metricRepository.GetAll());
+        }
+
+        [Test]
         public async Task DeleteMetricByIdSuccessTest()
         {
             // Action

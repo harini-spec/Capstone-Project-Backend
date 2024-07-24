@@ -80,6 +80,13 @@ namespace HealthTrackerTest.RepositoryTests
         }
 
         [Test]
+        public async Task GetAllTargetsFailTest()
+        {
+            // Action
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(() => targetRepository.GetAll());
+        }
+
+        [Test]
         public async Task DeleteTargetByIdSuccessTest()
         {
             // Arrange

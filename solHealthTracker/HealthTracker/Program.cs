@@ -95,6 +95,7 @@ namespace HealthTracker
             #region services 
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IMetricService, MetricService>();
             #endregion
 
 

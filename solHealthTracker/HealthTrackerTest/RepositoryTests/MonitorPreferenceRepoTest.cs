@@ -74,6 +74,16 @@ namespace HealthTrackerTest.RepositoryTests
         }
 
         [Test]
+        public async Task GetAllMonitorPreferencesFailTest()
+        {
+            // Arrange 
+            await monitorPreferenceRepo.Delete(1);
+
+            // Action
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(() => monitorPreferenceRepo.GetAll());
+        }
+
+        [Test]
         public async Task DeleteMonitorPreferenceByIdSuccessTest()
         {
             // Action

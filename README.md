@@ -130,6 +130,8 @@ ENUM Gender         - Female, Male, Others
 - Add them to User Preferences table one by one 
 - O/P: Msg - successfully added
 
+`GET/Coach monitor preferences`
+
 `GET/Problems`
 - I/P: -
 - Get health logs 

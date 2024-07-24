@@ -76,6 +76,16 @@ namespace HealthTrackerTest.RepositoryTests
         }
 
         [Test]
+        public async Task GetAllHealthLogsFailTest()
+        {
+            // Arrange 
+            await healthLogRepository.Delete(1);
+
+            // Action
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(() => healthLogRepository.GetAll());
+        }
+
+        [Test]
         public async Task DeleteHealthLogByIdSuccessTest()
         {
             // Action

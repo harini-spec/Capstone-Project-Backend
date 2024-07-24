@@ -74,6 +74,16 @@ namespace HealthTrackerTest.RepositoryTests
         }
 
         [Test]
+        public async Task GetAllIdealDataFailTest()
+        {
+            // Arrange 
+            await idealDataRepository.Delete(1);
+
+            // Action
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(() => idealDataRepository.GetAll());
+        }
+
+        [Test]
         public async Task DeleteIdealDataByIdSuccessTest()
         {
             // Action

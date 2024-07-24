@@ -87,6 +87,16 @@ namespace HealthTrackerTest.RepositoryTests
         }
 
         [Test]
+        public async Task GetAllUserDetailsFailTest()
+        {
+            // Arrange 
+            await userDetailRepo.Delete(1);
+
+            // Action
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(() => userDetailRepo.GetAll());
+        }
+
+        [Test]
         public async Task DeleteUserDetailByIdSuccessTest()
         {
             // Action

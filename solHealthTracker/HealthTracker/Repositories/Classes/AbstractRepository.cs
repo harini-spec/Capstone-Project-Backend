@@ -27,7 +27,11 @@ namespace HealthTracker.Repositories
 
         public async virtual Task<List<T>> GetAll()
         {
-            return await _dbSet.ToListAsync();
+            var result = await _dbSet.ToListAsync();
+            if (result.Count == 0) { 
+                throw new NoItemsFoundException();
+            }
+            return result;
         }
 
         public async virtual Task<T> GetById(K id)
