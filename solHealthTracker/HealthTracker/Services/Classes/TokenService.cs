@@ -45,17 +45,10 @@ namespace HealthTracker.Services.Classes
                 claims.Add(new Claim(ClaimTypes.Email, emailProperty.GetValue(user).ToString()));
             }
 
-            if (typeof(T).Name == "User")
+            var roleProperty = typeof(T).GetProperty("Role");
+            if (roleProperty != null)
             {
-                var roleProperty = typeof(T).GetProperty("Role");
-                if (roleProperty != null)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, roleProperty.GetValue(user).ToString()));
-                }
-            }
-            else
-            {
-                claims.Add(new Claim(ClaimTypes.Role, "Driver"));
+                claims.Add(new Claim(ClaimTypes.Role, roleProperty.GetValue(user).ToString()));
             }
 
             // Algorithm

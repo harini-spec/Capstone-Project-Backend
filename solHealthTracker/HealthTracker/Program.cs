@@ -2,6 +2,8 @@ using HealthTracker.Models;
 using HealthTracker.Models.DBModels;
 using HealthTracker.Repositories.Classes;
 using HealthTracker.Repositories.Interfaces;
+using HealthTracker.Services.Classes;
+using HealthTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -91,7 +93,8 @@ namespace HealthTracker
             #endregion
 
             #region services 
-            //builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<IUserService, UserService>();
             #endregion
 
 
