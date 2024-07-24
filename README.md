@@ -110,15 +110,6 @@ ENUM Gender         - Female, Male, Others
 - Get all health logs of user within the given date range 
 - O/P: Health log list 
 
-`Get/Notifications` 
-- I/P: -
-- Get user ID from token 
-- Get user preference metrics 
-- Get health logs of today 
-- Check if all user pref metrics have logs 
-- If not, add them to output dto  
-- O/P: List of metric types 
-
 `Get/Suggestions`
 - I/P: -
 - Get User ID from token 
