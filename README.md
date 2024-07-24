@@ -27,7 +27,7 @@ ENUM Gender         - Female, Male, Others
 
 ### For health coach:
 - **Monitor Preferences:** [ID], User ID, Metric Id, created_at, updated_at 
-- **Suggestions:** [ID], User ID, Health Log ID, Suggestion, is_like, created_at, updated_at 
+- **Suggestions:** [ID], User ID, Coach ID, Suggestion, is_like, created_at, updated_at 
 
 ## Endpoints:
 ### Common:
@@ -111,7 +111,7 @@ ENUM Gender         - Female, Male, Others
 `Get/Suggestions`
 - I/P: -
 - Get User ID from token 
-- Get health logs of user - check if those health log ids are present in suggestions 
+- suggestions for user
 - O/P: List of suggestions of user 
 
 `PUT/Update Coach Score`
@@ -130,9 +130,9 @@ ENUM Gender         - Female, Male, Others
 `GET/Problems`
 - I/P: -
 - Get health logs 
-- Health logs with coach's suggestions as critical
-- If health log has no suggestions by coach, add to output dto  
-- O/P: list of health logs 
+- Health logs with status as critical
+- If health log has no suggestions by coach, add user id to output dto 
+- O/P: list of user ids
 
 `POST/Suggestions` 
 - I/P: User ID, Suggestion

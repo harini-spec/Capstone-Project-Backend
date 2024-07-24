@@ -6,12 +6,12 @@ using System;
 
 namespace ATMApplication.Repositories
 {
-    public abstract class AbstractRepositoryClass<K, T> : IRepository<K, T> where T : class
+    public abstract class AbstractRepository<K, T> : IRepository<K, T> where T : class
     {
         protected readonly HealthTrackerContext _context;
         protected readonly DbSet<T> _dbSet;
 
-        public AbstractRepositoryClass(HealthTrackerContext context)
+        public AbstractRepository(HealthTrackerContext context)
         {
             this._context = context;
             this._dbSet = context.Set<T>();

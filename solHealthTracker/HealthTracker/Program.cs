@@ -1,5 +1,7 @@
 using HealthTracker.Models;
 using HealthTracker.Models.DBModels;
+using HealthTracker.Repositories.Classes;
+using HealthTracker.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -77,7 +79,15 @@ namespace HealthTracker
             #endregion
 
             #region repositories
-            //builder.Services.AddScoped<IRepository<string, Bus>, BusWithSeatsRepository>();
+            builder.Services.AddScoped<IRepository<int, HealthLog>, HealthLogRepository>();
+            builder.Services.AddScoped<IRepository<int, IdealData>, IdealDataRepository>();
+            builder.Services.AddScoped<IRepository<int, Metric>, MetricRepository>();
+            builder.Services.AddScoped<IRepository<int, MonitorPreference>, MonitorPreferenceRepository>();
+            builder.Services.AddScoped<IRepository<int, Suggestion>, SuggestionRepository>();
+            builder.Services.AddScoped<IRepository<int, Target>, TargetRepository>();
+            builder.Services.AddScoped<IRepository<int, User>, UserRepository>();
+            builder.Services.AddScoped<IRepository<int, UserDetail>, UserDetailRepository>();
+            builder.Services.AddScoped<IRepository<int, UserPreference>, UserPreferenceRepository>();
             #endregion
 
             #region services 

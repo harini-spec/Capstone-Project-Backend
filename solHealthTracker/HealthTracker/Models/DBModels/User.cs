@@ -24,6 +24,8 @@ namespace HealthTracker.Models.DBModels
 
         public List<UserPreference>? UserPreferences { get; set; }
         public List<MonitorPreference>? MonitorPreferences { get; set; }
-        public List<Suggestion>? Suggestions { get; set; }
+        public List<Suggestion>? SuggestionsByCoach { get; set; }
+        public List<Suggestion> SuggestionsForUser { get; set; }
+
     }
 }

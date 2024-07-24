@@ -18,8 +18,5 @@ namespace HealthTracker.Models.DBModels
         public HealthStatusEnum.HealthStatus HealthStatus { get; set; }
         public DateTime Created_at { get; set; }
         public DateTime Updated_at { get; set; }
-
-
-        public List<Suggestion> SuggestionsForLog { get; set; }
     }
 }

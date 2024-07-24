@@ -10,10 +10,10 @@ namespace HealthTracker.Models.DBModels
         public int Id { get; set; }
 
         public int CoachId { get; set; }
-        public User SuggestionsByCoach { get; set; }
+        public User SuggestionByCoach { get; set; }
 
-        public int HealthLogId { get; set; }
-        public HealthLog SuggestionForHealthLog { get; set; }
+        public int UserId { get; set; }
+        public User SuggestionForUser { get; set; }
 
         public string Description { get; set; }
         public bool IsLiked { get; set; } = false;

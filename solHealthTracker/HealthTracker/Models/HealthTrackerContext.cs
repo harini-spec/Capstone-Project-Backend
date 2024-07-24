@@ -50,15 +50,15 @@ namespace HealthTracker.Models
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Suggestion>()
-                .HasOne(s => s.SuggestionsByCoach)
-                .WithMany(c => c.Suggestions)
+                .HasOne(s => s.SuggestionByCoach)
+                .WithMany(c => c.SuggestionsByCoach)
                 .HasForeignKey(s => s.CoachId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Suggestion>()
-               .HasOne(s => s.SuggestionForHealthLog)
-               .WithMany(h => h.SuggestionsForLog)
-               .HasForeignKey(s => s.HealthLogId)
+               .HasOne(s => s.SuggestionForUser)
+               .WithMany(u => u.SuggestionsForUser)
+               .HasForeignKey(s => s.UserId)
                .OnDelete(DeleteBehavior.Restrict);
         }
     }
