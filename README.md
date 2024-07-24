@@ -6,7 +6,7 @@ Enums:
 
 ENUM Health_status  - Good, Fair, Poor
 
-ENUM Target_status  - Ongoing, Achieved, Not_Achieved
+ENUM Target_status  - Achieved, Not_Achieved
 
 ENUM Role           - User, Coach, Admin
 
