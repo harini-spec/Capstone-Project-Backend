@@ -42,6 +42,10 @@ ENUM Gender         - Female, Male, Others
 - check if user active
 - O/P: Msg - successfully logged in
 
+`GET/All Metrics` 
+- I/P: - 
+- O/P: List of metrics
+
 ### User:
 `POST/User Preferences` 
 - I/P: Metric list
