@@ -11,6 +11,7 @@ namespace HealthTracker.Services.Interfaces
         public Task<List<MonitorPreference>> GetAllMonitorPreferencesOfCoach(int UserId);
         public Task<List<UserPreference>> GetAllPreferencesOfUser(int UserId);
         public Task<int> FindPreferenceIdFromMetricTypeAndUserId(string Metric_Type, int UserId);
-
+        public Task<UserPreference> FindUserPreferenceByPreferenceId(int prefId);
+        public Task<Metric> GetMetricById(int MetricId);
     }
 }

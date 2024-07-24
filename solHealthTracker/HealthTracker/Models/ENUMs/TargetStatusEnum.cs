@@ -4,7 +4,6 @@
     {
         public enum TargetStatus
         {
-            Ongoing,
             Achieved,
             Not_Achieved
         }

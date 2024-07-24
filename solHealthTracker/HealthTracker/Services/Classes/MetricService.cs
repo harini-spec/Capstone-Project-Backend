@@ -91,6 +91,24 @@ namespace HealthTracker.Services.Classes
             }
         }
 
+        public async Task<UserPreference> FindUserPreferenceByPreferenceId(int prefId)
+        {
+            try
+            {
+                return await _UserPreferenceRepository.GetById(prefId);
+            }
+            catch { throw; }
+        }
+
+        public async Task<Metric> GetMetricById(int MetricId)
+        {
+            try
+            {
+                return await _MetricRepository.GetById(MetricId);
+            }
+            catch { throw; }
+        }
+
         public async Task<List<string>> GetAllMetrics()
         {
             try

@@ -1,12 +1,13 @@
-﻿using HealthTracker.Models.DBModels;
-using HealthTracker.Models.ENUMs;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using HealthTracker.Models.ENUMs;
 using System.ComponentModel.DataAnnotations;
 
 namespace HealthTracker.Models.DTOs.Target
 {
-    public class TargetInputDTO
+    public class UpdateTargetInputDTO
     {
+        [Required]
+        public int TargetId { get; set; }
+
         [Required]
         public string MetricType { get; set; }
 

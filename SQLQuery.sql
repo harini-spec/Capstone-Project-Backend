@@ -14,3 +14,4 @@ select * from Targets
 
 delete from MonitorPreferences
 delete from UserPreferences
+delete from Targets

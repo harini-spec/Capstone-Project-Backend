@@ -16,8 +16,7 @@ namespace HealthTracker.Models.DBModels
         public float TargetMinValue { get; set; }
         public float TargetMaxValue { get; set; }
         public TargetStatusEnum.TargetStatus TargetStatus { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime TargetDate { get; set; }
         public DateTime Created_at { get; set; }
         public DateTime Updated_at { get; set; }
 

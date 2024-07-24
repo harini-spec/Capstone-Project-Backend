@@ -27,36 +27,11 @@
     - Do ideal value check and target value check - update both status in the DTO 
     - O/P: output DTO: Ideal status, target status 
 
-`POST/Target`
-    - I/P: Target data 
-    - Populate target table
-    - Check if it is in ideal range - if not, send a msg 
-    - O/P: Msg - status based on the ideal range 
-
-`GET/Target` 
-    - I/P: Metric type
-    - Calculate preference ID 
-    - Get target data for current date between start and end date 
-    - O/P: Target DTO 
-
-`PUT/Target` (update updated_at)
-    - I/P: Target updated data 
-    - O/P: Update and msg status based on ideal range 
-
 `Get/Graph Data` 
     - I/P (params): duration, metric_type 
     - Calculate start and end date based on duration 
     - Get all health logs of user within the given date range 
     - O/P: Health log list 
-
-`Get/Notifications` 
-    - I/P: -
-    - Get user ID from token 
-    - Get user preference metrics 
-    - Get health logs of today 
-    - Check if all user pref metrics have logs 
-    - If not, add them to output dto  
-    - O/P: List of metric types 
 
 `Get/Suggestions`
     - I/P: -

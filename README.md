@@ -89,17 +89,19 @@ ENUM Gender         - Female, Male, Others
 `POST/Target`
 - I/P: Target data 
 - Populate target table
-- Check if it is in ideal range - if not, send a msg 
+- Check if target already set for the given date
 - O/P: Msg - status based on the ideal range 
 
 `GET/Target` 
 - I/P: Metric type
 - Calculate preference ID 
+- Not achieved target in earliest future
 - Get target data for current date between start and end date 
 - O/P: Target DTO 
 
 `PUT/Target`
 - I/P: Target updated data 
+- Check if target already set for the given date
 - O/P: Update and msg status based on ideal range 
 
 `Get/Graph Data` 

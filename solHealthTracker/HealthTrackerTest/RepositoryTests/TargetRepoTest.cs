@@ -38,7 +38,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Action
             var result = await targetRepository.Add(new Target
-            { Id = 1, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now.AddDays(2), TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved, TargetMinValue = 10, TargetMaxValue = 12 });
+            { Id = 1, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, TargetDate = DateTime.Now.AddDays(2), TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved, TargetMinValue = 10, TargetMaxValue = 12 });
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -49,7 +49,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Arrange
             await targetRepository.Add(new Target
-            { Id = 1, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now.AddDays(2), TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved, TargetMinValue = 10, TargetMaxValue = 12 });
+            { Id = 1, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, TargetDate = DateTime.Now.AddDays(2), TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved, TargetMinValue = 10, TargetMaxValue = 12 });
 
             // Action
             var result = targetRepository.GetById(1);
@@ -70,7 +70,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Arrange
             await targetRepository.Add(new Target
-            { Id = 1, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now.AddDays(2), TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved, TargetMinValue = 10, TargetMaxValue = 12 });
+            { Id = 1, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, TargetDate = DateTime.Now.AddDays(2), TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved, TargetMinValue = 10, TargetMaxValue = 12 });
 
             // Action
             var result = await targetRepository.GetAll();
@@ -91,7 +91,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Arrange
             await targetRepository.Add(new Target
-            { Id = 1, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now.AddDays(2), TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved, TargetMinValue = 10, TargetMaxValue = 12 });
+            { Id = 1, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, TargetDate = DateTime.Now.AddDays(2), TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved, TargetMinValue = 10, TargetMaxValue = 12 });
 
             // Action
             var result = await targetRepository.Delete(1);
@@ -112,7 +112,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Action
             var exception = Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => targetRepository.Update(new Target
-            { Id = 3, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now.AddDays(2), TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved, TargetMinValue = 10, TargetMaxValue = 12 }));
+            { Id = 3, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, TargetDate = DateTime.Now.AddDays(2), TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved, TargetMinValue = 10, TargetMaxValue = 12 }));
 
         }
 
@@ -122,7 +122,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Arrange
             var target = await targetRepository.Add(new Target
-            { Id = 1, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now.AddDays(2), TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved, TargetMinValue = 10, TargetMaxValue = 12 });
+            { Id = 1, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, TargetDate = DateTime.Now.AddDays(2), TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved, TargetMinValue = 10, TargetMaxValue = 12 });
             target.TargetMaxValue = 15;
 
             // Action
