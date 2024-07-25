@@ -107,7 +107,7 @@ ENUM Gender         - Female, Male, Others
 
 `Get/Graph Data` 
 - I/P (params): duration, metric_type 
-- Duration - This week, last week, this month, last month, overall
+- Duration - This Week, Last Week, This Month, Last Month, Overall
 - Calculate start and end date based on duration 
 - Get all health logs of user within the given date range 
 - O/P: Health log list 

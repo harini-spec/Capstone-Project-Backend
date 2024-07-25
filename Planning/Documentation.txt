@@ -1,10 +1,4 @@
 ### User:
-`Get/Graph Data` 
-    - I/P (params): duration, metric_type 
-    - Calculate start and end date based on duration 
-    - Get all health logs of user within the given date range 
-    - O/P: Health log list
-
 `Get/Suggestions`
     - I/P: -
     - Get User ID from token 
