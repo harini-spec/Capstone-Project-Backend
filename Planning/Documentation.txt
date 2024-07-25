@@ -1,13 +1,4 @@
 ### User:
-    If Target entered after logging, call Get Health log again - updates target status 
-    If updated target date, call Get Health log again - updates target status 
-
-`PUT/Update Health log` (update updated_at)
-    - I/P: Health log ID, updated data 
-    - Do ideal value check and target value check - update both status in the DTO 
-    - Update target status
-    - O/P: output DTO: Ideal status, target status 
-
 `Get/Graph Data` 
     - I/P (params): duration, metric_type 
     - Calculate start and end date based on duration 

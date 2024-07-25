@@ -70,40 +70,32 @@ namespace HealthTracker.Services.Classes
             catch { throw; }
         }
 
-    //`PUT/Update Health log` (update updated_at)
-    //- Do ideal value check and target value check - update both status in the DTO 
-    //- Update target status
-    //- O/P: output DTO: Ideal status, target status
-        //public async Task<AddHealthLogInputDTO> UpdateHealthLog(int HealthLogId, float value)
-        //{
-        //    HealthLog log = await _HealthLogRepository.GetById(HealthLogId);
-        //    if (log == null)
-        //        throw new EntityNotFoundException("Health Log not found!");
+        public async Task<AddHealthLogOutputDTO> UpdateHealthLog(int HealthLogId, float value, int UserId)
+        {
+            HealthLog log = null;
+            try
+            {
+                log = await _HealthLogRepository.GetById(HealthLogId);
+                log.value = value;
+                log.Updated_at = DateTime.Now;
 
-        //    TargetOutputDTO target = null;
-        //    try
-        //    {
-        //        target = await _TargetService.GetTodaysTarget(healthLogInputDTO.PreferenceId, UserId);
-        //    }
-        //    catch { }
-        //    HealthLog healthLog = new HealthLog();
-        //    healthLog.PreferenceId = healthLogInputDTO.PreferenceId;
-        //    healthLog.value = healthLogInputDTO.value;
-        //    healthLog.Created_at = DateTime.Now;
-        //    healthLog.Updated_at = DateTime.Now;
-        //    if (target == null)
-        //        healthLog.TargetId = null;
-        //    else
-        //        healthLog.TargetId = target.Id;
-        //    healthLog.HealthStatus = await calculateHealthStatus(healthLogInputDTO, UserId);
-        //    await _HealthLogRepository.Add(healthLog);
+                AddHealthLogInputDTO healthLogInput = new AddHealthLogInputDTO();
+                healthLogInput.PreferenceId = log.PreferenceId;
+                healthLogInput.value = value;
+                log.HealthStatus = await calculateHealthStatus(healthLogInput, UserId);
+                await _HealthLogRepository.Update(log);
 
-        //    AddHealthLogOutputDTO healthLogOutputDTO = new AddHealthLogOutputDTO();
-        //    healthLogOutputDTO.HealthLogId = healthLog.Id;
-        //    healthLogOutputDTO.HealthStatus = healthLog.HealthStatus.ToString();
-        //    healthLogOutputDTO.TargetStatus = await calculateTargetStatus(healthLogInputDTO, UserId);
-        //    return healthLogOutputDTO;
-        //}
+                AddHealthLogOutputDTO healthLogOutputDTO = new AddHealthLogOutputDTO();
+                healthLogOutputDTO.HealthLogId = log.Id;
+                healthLogOutputDTO.HealthStatus = log.HealthStatus.ToString();
+                healthLogOutputDTO.TargetStatus = await calculateTargetStatus(healthLogInput, UserId);
+                return healthLogOutputDTO;
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
         private async Task<GetHealthLogOutputDTO> MapHealthLogToGetHealthLogOutputDTO(HealthLog healthlog, int UserId)
         {
@@ -127,16 +119,22 @@ namespace HealthTracker.Services.Classes
             try
             {
                 var target = await _TargetService.GetTodaysTarget(healthLogInputDTO.PreferenceId, UserId);
+
+                Target TargetToUpdate = await _TargetService.GetTargetById(target.Id);
+                TargetToUpdate.Updated_at = DateTime.Now;
+
                 if (healthLogInputDTO.value >= target.TargetMinValue && healthLogInputDTO.value <= target.TargetMaxValue)
                 {
-                    Target TargetToUpdate = await _TargetService.GetTargetById(target.Id);
                     TargetToUpdate.TargetStatus = TargetStatusEnum.TargetStatus.Achieved;
-                    TargetToUpdate.Updated_at = DateTime.Now;
                     await _TargetService.UpdateTargetRepo(TargetToUpdate);
-
                     return TargetStatusEnum.TargetStatus.Achieved.ToString();
                 }
-                return TargetStatusEnum.TargetStatus.Not_Achieved.ToString();
+                else
+                {
+                    TargetToUpdate.TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved;
+                    await _TargetService.UpdateTargetRepo(TargetToUpdate);
+                    return TargetStatusEnum.TargetStatus.Not_Achieved.ToString();
+                }
             }
             catch(NoItemsFoundException) 
             { 
