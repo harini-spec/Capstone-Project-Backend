@@ -112,7 +112,7 @@ ENUM Gender         - Female, Male, Others
 - Get all health logs of user within the given date range 
 - O/P: Health log list 
 
-`Get/Suggestions`
+`Get/All Suggestions`
 - I/P: -
 - Get User ID from token 
 - suggestions for user

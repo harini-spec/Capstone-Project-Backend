@@ -75,8 +75,57 @@ namespace HealthTracker.Services.Classes
             catch { throw; }
         }
 
+        public async Task<List<SuggestionOutputDTO>> GetUserSuggestions(int UserId)
+        {
+            try
+            {
+                var suggestions = await _SuggestionRepository.GetAll();
+                var UserSuggestions = suggestions.Where(suggestion => suggestion.UserId == UserId).ToList();
+                if (UserSuggestions.Count == 0)
+                    throw new NoItemsFoundException("No Suggestions Found!");
+                return MapSuggestionsToSuggestionOutputDTOs(UserSuggestions);
+            }
+            catch { throw; }
+        }
+
+        public async Task<List<SuggestionOutputDTO>> GetCoachSuggestionsForUser(int UserId, int CoachId)
+        {
+            try
+            {
+                var suggestions = await _SuggestionRepository.GetAll();
+                var UserSuggestions = suggestions.Where(suggestion => suggestion.UserId == UserId && suggestion.CoachId == CoachId).ToList();
+                if (UserSuggestions.Count == 0)
+                    throw new NoItemsFoundException("No Suggestions Found!");
+                return MapSuggestionsToSuggestionOutputDTOs(UserSuggestions);
+
+            }
+            catch { throw; }
+        }
+
 
         #region Mappers
+
+        private List<SuggestionOutputDTO> MapSuggestionsToSuggestionOutputDTOs(List<Suggestion> userSuggestions)
+        {
+            List<SuggestionOutputDTO> suggestionOutputDTOs = new List<SuggestionOutputDTO>();
+            foreach (var suggestion in userSuggestions)
+            {
+                suggestionOutputDTOs.Add(MapSuggestionToSuggestionOutputDTO(suggestion));
+            }
+            return suggestionOutputDTOs;
+        }
+
+        private SuggestionOutputDTO MapSuggestionToSuggestionOutputDTO(Suggestion userSuggestion)
+        {
+            SuggestionOutputDTO suggestionOutputDTO = new SuggestionOutputDTO();
+            suggestionOutputDTO.Id = userSuggestion.Id;
+            suggestionOutputDTO.UserId = userSuggestion.UserId;
+            suggestionOutputDTO.CoachId = userSuggestion.CoachId;
+            suggestionOutputDTO.Description = userSuggestion.Description;
+            suggestionOutputDTO.Created_at = userSuggestion.Created_at;
+            suggestionOutputDTO.Updated_at = userSuggestion.Updated_at;
+            return suggestionOutputDTO;
+        }
 
         private async Task<List<ProblemOutputDTO>> MapHealthLogsToDictionary(List<HealthLog> result)
         {

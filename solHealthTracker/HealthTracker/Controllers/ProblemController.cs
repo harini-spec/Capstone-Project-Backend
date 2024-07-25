@@ -80,5 +80,61 @@ namespace HealthTracker.Controllers
                 return BadRequest(new ErrorModel(500, ex.Message));
             }
         }
+
+        [Authorize(Roles = "User")]
+        [HttpGet("GetUserSuggestions")]
+        [ProducesResponseType(typeof(List<SuggestionOutputDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<List<SuggestionOutputDTO>>> GetUserSuggestions()
+        {
+            try
+            {
+                int UserId = -1;
+                foreach (var claim in User.Claims)
+                {
+                    if (claim.Type == "ID")
+                        UserId = Convert.ToInt32(claim.Value);
+                }
+                var result = await _ProblemService.GetUserSuggestions(UserId);
+                return Ok(result);
+            }
+            catch (NoItemsFoundException nif)
+            {
+                return NotFound(new ErrorModel(404, nif.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorModel(500, ex.Message));
+            }
+        }
+
+        [Authorize(Roles = "Coach")]
+        [HttpGet("GetCoachSuggestionsForUser")]
+        [ProducesResponseType(typeof(List<SuggestionOutputDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<List<SuggestionOutputDTO>>> GetCoachSuggestionsForUser(int UserId)
+        {
+            try
+            {
+                int CoachId = -1;
+                foreach (var claim in User.Claims)
+                {
+                    if (claim.Type == "ID")
+                        CoachId = Convert.ToInt32(claim.Value);
+                }
+                var result = await _ProblemService.GetCoachSuggestionsForUser(UserId, CoachId);
+                return Ok(result);
+            }
+            catch (NoItemsFoundException nif)
+            {
+                return NotFound(new ErrorModel(404, nif.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorModel(500, ex.Message));
+            }
+        }
     }
 }
