@@ -3,7 +3,7 @@
     - I/P (params): duration, metric_type 
     - Calculate start and end date based on duration 
     - Get all health logs of user within the given date range 
-    - O/P: Health log list 
+    - O/P: Health log list
 
 `Get/Suggestions`
     - I/P: -

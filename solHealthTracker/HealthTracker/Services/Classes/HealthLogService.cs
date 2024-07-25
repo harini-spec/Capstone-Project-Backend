@@ -155,17 +155,18 @@ namespace HealthTracker.Services.Classes
                     return HealthStatusEnum.HealthStatus.NoStatus;
 
                 // For Weight, BMI is calculated
+                float BMI_Val = 0;
                 if(Metric.MetricType == "Weight")
                 {
                     var healthlogs = await _HealthLogRepository.GetAll();
                     int prefId = await _MetricService.FindPreferenceIdFromMetricTypeAndUserId("Height", UserId);
                     var heightlogs = healthlogs.Where(log => log.PreferenceId == prefId).OrderBy(x => x.Created_at).ToList();
-                    if (healthlogs.Count == 0)
+                    if (heightlogs.Count == 0)
                         throw new EntityNotFoundException("Height Log not entered");
-                    var heightlog = heightlogs[healthlogs.Count - 1];
+                    var heightlog = heightlogs[heightlogs.Count - 1];
 
                     var BMI = (healthlog.value / (heightlog.value * heightlog.value));
-                    healthlog.value = BMI;
+                    BMI_Val = BMI;
 
                     var BMIMetric = await _MetricService.FindMetricByMetricType("BMI");
                     MetricId = BMIMetric.Id;
@@ -175,7 +176,14 @@ namespace HealthTracker.Services.Classes
                 var MetricVals = IdealVals.Where(val =>  val.MetricId == MetricId).ToList();
                 foreach (var val in MetricVals)
                 {
-                    if(healthlog.value >= val.MinVal && healthlog.value <= val.MaxVal)
+                    if(Metric.MetricType == "Weight")
+                    {
+                        if (BMI_Val >= val.MinVal && BMI_Val <= val.MaxVal)
+                        {
+                            return val.HealthStatus;
+                        }
+                    }
+                    else if(healthlog.value >= val.MinVal && healthlog.value <= val.MaxVal)
                     {
                         return val.HealthStatus;
                     }
