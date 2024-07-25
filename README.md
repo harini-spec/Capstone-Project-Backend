@@ -130,9 +130,8 @@ ENUM Gender         - Female, Male, Others
 `GET/Problems`
 - I/P: -
 - Get health logs 
-- Health logs with status as critical
-- If health log has no suggestions by coach, add user id to output dto 
-- O/P: list of user ids
+- Health logs with status as Poor (Today) - Get User Id 
+- O/P: list of user ids, metrics
 
 `POST/Suggestions` 
 - I/P: User ID, Suggestion

@@ -99,6 +99,7 @@ namespace HealthTracker
             builder.Services.AddScoped<IHealthLogService, HealthLogService>();
             builder.Services.AddScoped<ITargetService, TargetService>();
             builder.Services.AddScoped<IGraphService, GraphService>();
+            builder.Services.AddScoped<IProblemService, ProblemService>();
             #endregion
 
 

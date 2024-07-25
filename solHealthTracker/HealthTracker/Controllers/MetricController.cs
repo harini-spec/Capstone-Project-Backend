@@ -10,6 +10,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics;
 using HealthTracker.Models.DTOs.MetricPreference;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthTracker.Controllers
 {
@@ -87,6 +88,7 @@ namespace HealthTracker.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<string>> AddPreferenceList(List<string> Preferences)
         {
@@ -115,6 +117,10 @@ namespace HealthTracker.Controllers
             catch (EntityNotFoundException enf)
             {
                 return NotFound(new ErrorModel(404, enf.Message));
+            }
+            catch(EntityAlreadyExistsException eae)
+            {
+                return Conflict(new ErrorModel(404, eae.Message));
             }
             catch (Exception ex)
             {

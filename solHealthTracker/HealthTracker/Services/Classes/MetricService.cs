@@ -35,6 +35,11 @@ namespace HealthTracker.Services.Classes
                 {
                     foreach (var preference in Preferences)
                     {
+                        var prefs = await _UserPreferenceRepository.GetAll();
+                        var Metric = await FindMetricByMetricType(preference);
+                        if (prefs.Where(pref => pref.UserId == UserId && pref.MetricId == Metric.Id).ToList().Count != 0)
+                            throw new EntityAlreadyExistsException("User Preference already exists. Choose again!");
+
                         UserPreference userPref = await MapUserPreferenceStringToUserPreference(preference, UserId);
                         await _UserPreferenceRepository.Add(userPref);
                     }
@@ -46,6 +51,11 @@ namespace HealthTracker.Services.Classes
                 {
                     foreach (var preference in Preferences)
                     {
+                        var prefs = await _MonitorPreferenceRepository.GetAll();
+                        var Metric = await FindMetricByMetricType(preference);
+                        if (prefs.Where(pref => pref.CoachId == UserId && pref.MetricId == Metric.Id).ToList().Count != 0)
+                            throw new EntityAlreadyExistsException("Monitor Preference already exists. Choose again!");
+
                         MonitorPreference monitorPref = await MapMonitorPreferenceStringToMonitorPreference(preference, UserId);
                         await _MonitorPreferenceRepository.Add(monitorPref);
                     }

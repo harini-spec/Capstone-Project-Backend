@@ -1,0 +1,100 @@
+﻿using HealthTracker.Exceptions;
+using HealthTracker.Models.DBModels;
+using HealthTracker.Models.DTOs.Suggestions;
+using HealthTracker.Repositories.Interfaces;
+using HealthTracker.Services.Interfaces;
+
+namespace HealthTracker.Services.Classes
+{
+    public class ProblemService : IProblemService
+    {
+        private readonly IRepository<int, HealthLog> _HealthLogRepository;
+        private readonly IRepository<int, MonitorPreference> _MonitorPreferenceRepository;
+        private readonly IMetricService _MetricService;
+
+        public ProblemService(IRepository<int, HealthLog> healthLogRepository, IRepository<int, MonitorPreference> monitorPreferenceRepository, IMetricService metricService)
+        {
+            _HealthLogRepository = healthLogRepository;
+            _MonitorPreferenceRepository = monitorPreferenceRepository;
+            _MetricService = metricService;
+        }
+
+        public async Task<List<ProblemOutputDTO>> GetUserIdsWithProblems(int CoachId)
+        {
+            try
+            {
+                var AllMonitorPrefs = await _MonitorPreferenceRepository.GetAll();
+                var CoachMonitorPrefs = AllMonitorPrefs.Where(pref => pref.CoachId == CoachId).ToList();
+                if (CoachMonitorPrefs.Count == 0)
+                    throw new NoItemsFoundException("Coach Preferences not set!");
+
+                var Logs = await _HealthLogRepository.GetAll();
+                var TodaysPoorLogs = Logs.Where(log => log.Created_at.Date == DateTime.Now.Date && log.HealthStatus == Models.ENUMs.HealthStatusEnum.HealthStatus.Poor).ToList();
+                if (TodaysPoorLogs.Count == 0)
+                    throw new NoItemsFoundException("No Logs for today!");
+
+                var Result = new List<HealthLog>();
+                foreach (var coach_pref in CoachMonitorPrefs)
+                {
+                    foreach (var log in TodaysPoorLogs)
+                    {
+                        var user_pref = await _MetricService.FindUserPreferenceByPreferenceId(log.PreferenceId);
+                        if (user_pref.MetricId == coach_pref.MetricId)
+                            Result.Add(log);
+                    }
+                }
+                if(Result.Count == 0)
+                    throw new NoItemsFoundException("No Problems for today!");
+
+                return await MapHealthLogsToDictionary(Result);
+            }
+            catch { throw; }
+        }
+
+
+
+        #region Mappers
+
+        private async Task<List<ProblemOutputDTO>> MapHealthLogsToDictionary(List<HealthLog> result)
+        {
+            try
+            {
+                List<ProblemOutputDTO> problemOutputDTOs = new List<ProblemOutputDTO>();
+                Dictionary<int, List<string>> UserIdWithMetrics = new Dictionary<int, List<string>>();
+
+                foreach (var log in result)
+                {
+                    var user_pref = await _MetricService.FindUserPreferenceByPreferenceId(log.PreferenceId);
+                    if (user_pref != null)
+                    {
+                        if (!UserIdWithMetrics.ContainsKey(user_pref.UserId))
+                        {
+                            UserIdWithMetrics[user_pref.UserId] = new List<string>();
+                        }
+
+                        var Metric = await _MetricService.GetMetricById(user_pref.MetricId);
+                        UserIdWithMetrics[user_pref.UserId].Add(Metric.MetricType);
+                    }
+                }
+                return MapDictionaryToProblemOutputDTOs(UserIdWithMetrics);
+            }
+            catch { throw; }
+        }
+
+        private List<ProblemOutputDTO> MapDictionaryToProblemOutputDTOs(Dictionary<int, List<string>> userIdWithMetrics)
+        {
+            List<ProblemOutputDTO> result = new List<ProblemOutputDTO>();
+            foreach (var Item in userIdWithMetrics)
+            {
+                ProblemOutputDTO problemOutputDTO = new ProblemOutputDTO();
+                problemOutputDTO.UserId = Item.Key;
+                problemOutputDTO.MetricsWithProblem = Item.Value;
+                result.Add(problemOutputDTO);
+            }
+            return result;
+        }
+
+        #endregion
+
+    }
+}

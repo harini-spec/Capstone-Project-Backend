@@ -19,5 +19,5 @@ select * from Targets
 
 delete from MonitorPreferences
 delete from UserPreferences
-delete from Targets
-delete from HealthLogs
+delete from Targets 
+delete from HealthLogs where id=11 or id=12 

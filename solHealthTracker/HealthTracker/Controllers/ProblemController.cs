@@ -6,31 +6,37 @@ using HealthTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using HealthTracker.Models.DTOs.Graph;
+using HealthTracker.Models.DTOs.Suggestions;
 
 namespace HealthTracker.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GraphController : ControllerBase
+    public class ProblemController : ControllerBase
     {
-        private readonly IGraphService _GraphService;
+        private readonly IProblemService _ProblemService;
 
-        public GraphController(IGraphService graphService)
+        public ProblemController(IProblemService problemService)
         {
-            _GraphService = graphService;
+            _ProblemService = problemService;
         }
 
-        [Authorize(Roles = "User, Coach")]
-        [HttpGet("GetGraphData")]
-        [ProducesResponseType(typeof(List<GraphDataOutputDTO>), StatusCodes.Status200OK)]
+        [Authorize(Roles = "Coach")]
+        [HttpGet("GetProblems")]
+        [ProducesResponseType(typeof(List<ProblemOutputDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<GraphDataOutputDTO>>> GetGraphData(string MetricType, string Duration, int UserId)
+        public async Task<ActionResult<List<ProblemOutputDTO>>> GetProblems()
         {
                 try
                 {
-                    var result = await _GraphService.GetGraphData(MetricType, Duration, UserId);
+                    int CoachId = -1;
+                    foreach (var claim in User.Claims)
+                    {
+                        if (claim.Type == "ID")
+                            CoachId = Convert.ToInt32(claim.Value);
+                    }
+                    var result = await _ProblemService.GetUserIdsWithProblems(CoachId);
                     return Ok(result);
                 }
                 catch (NoItemsFoundException nif)
