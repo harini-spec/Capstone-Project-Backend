@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HealthTracker.Models.DTOs.HealthLog
 {
-    public class HealthLogInputDTO
+    public class AddHealthLogInputDTO
     {
         [Required]
         public int PreferenceId { get; set; }

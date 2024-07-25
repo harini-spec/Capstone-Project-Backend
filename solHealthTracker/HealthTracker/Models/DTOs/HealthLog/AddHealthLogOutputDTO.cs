@@ -2,7 +2,7 @@
 
 namespace HealthTracker.Models.DTOs.HealthLog
 {
-    public class HealthLogOutputDTO
+    public class AddHealthLogOutputDTO
     {
         public int HealthLogId { get; set; }
         public string HealthStatus { get; set; }

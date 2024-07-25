@@ -5,6 +5,7 @@ using HealthTracker.Models.DTOs.Target;
 using HealthTracker.Models.ENUMs;
 using HealthTracker.Repositories.Interfaces;
 using HealthTracker.Services.Interfaces;
+using System.Collections.Immutable;
 
 namespace HealthTracker.Services.Classes
 {
@@ -23,7 +24,7 @@ namespace HealthTracker.Services.Classes
             _TargetService = targetService;
         }
 
-        public async Task<HealthLogOutputDTO> AddHealthLog(HealthLogInputDTO healthLogInputDTO, int UserId)
+        public async Task<AddHealthLogOutputDTO> AddHealthLog(AddHealthLogInputDTO healthLogInputDTO, int UserId)
         {
             try
             {
@@ -35,44 +36,89 @@ namespace HealthTracker.Services.Classes
                     throw new EntityAlreadyExistsException("Health Log already entered!");
                 else throw new NoItemsFoundException();
             }
-            catch(NoItemsFoundException)
+            catch (NoItemsFoundException)
             {
+                TargetOutputDTO target = null;
                 try
                 {
-                    HealthLog healthLog = new HealthLog();
-                    healthLog.PreferenceId = healthLogInputDTO.PreferenceId;
-                    healthLog.value = healthLogInputDTO.value;
-                    healthLog.Created_at = DateTime.Now;
-                    healthLog.Updated_at = DateTime.Now;
-                    healthLog.HealthStatus = await calculateHealthStatus(healthLogInputDTO, UserId);
-                    await _HealthLogRepository.Add(healthLog);
-
-                    HealthLogOutputDTO healthLogOutputDTO = new HealthLogOutputDTO();
-                    healthLogOutputDTO.HealthLogId = healthLog.Id;
-                    healthLogOutputDTO.HealthStatus = healthLog.HealthStatus.ToString();
-                    healthLogOutputDTO.TargetStatus = await calculateTargetStatus(healthLogInputDTO, UserId);
-                    return healthLogOutputDTO;
+                    target = await _TargetService.GetTodaysTarget(healthLogInputDTO.PreferenceId, UserId);
                 }
-                catch { throw; }
+                catch { }
+                HealthLog healthLog = new HealthLog();
+                healthLog.PreferenceId = healthLogInputDTO.PreferenceId;
+                healthLog.value = healthLogInputDTO.value;
+                healthLog.Created_at = DateTime.Now;
+                healthLog.Updated_at = DateTime.Now;
+                if (target == null)
+                    healthLog.TargetId = null;
+                else
+                    healthLog.TargetId = target.Id;
+                healthLog.HealthStatus = await calculateHealthStatus(healthLogInputDTO, UserId);
+                await _HealthLogRepository.Add(healthLog);
+
+                AddHealthLogOutputDTO healthLogOutputDTO = new AddHealthLogOutputDTO();
+                healthLogOutputDTO.HealthLogId = healthLog.Id;
+                healthLogOutputDTO.HealthStatus = healthLog.HealthStatus.ToString();
+                healthLogOutputDTO.TargetStatus = await calculateTargetStatus(healthLogInputDTO, UserId);
+                return healthLogOutputDTO;
             }
         }
 
-        private async Task<string> calculateTargetStatus(HealthLogInputDTO healthLogInputDTO, int UserId)
+        public async Task<GetHealthLogOutputDTO> GetHealthLog(int PrefId, int UserId)
         {
-            var target = await _TargetService.GetTodaysTarget(healthLogInputDTO.PreferenceId, UserId);
-            if(healthLogInputDTO.value >= target.TargetMinValue && healthLogInputDTO.value <= target.TargetMaxValue)
+            try
             {
-                Target TargetToUpdate = await _TargetService.GetTargetById(target.Id);
-                TargetToUpdate.TargetStatus = TargetStatusEnum.TargetStatus.Achieved;
-                TargetToUpdate.Updated_at = DateTime.Now;
-                await _TargetService.UpdateTargetRepo(TargetToUpdate);
-
-                return TargetStatusEnum.TargetStatus.Achieved.ToString();
+                var healthlogs = await _HealthLogRepository.GetAll();
+                var healthlog = healthlogs.Where(log => log.PreferenceId == PrefId && log.Created_at.Date == DateTime.Now.Date).ToList();
+                if (healthlog.Count > 0)
+                {
+                    return await MapHealthLogToGetHealthLogOutputDTO(healthlog[0], UserId);
+                }
+                else throw new NoItemsFoundException("No Health logs found!");
             }
-            return TargetStatusEnum.TargetStatus.Not_Achieved.ToString();
+            catch { throw; }
         }
 
-        private async Task<HealthStatusEnum.HealthStatus> calculateHealthStatus(HealthLogInputDTO healthlog, int UserId)
+        private async Task<GetHealthLogOutputDTO> MapHealthLogToGetHealthLogOutputDTO(HealthLog healthlog, int UserId)
+        {
+            GetHealthLogOutputDTO getHealthLogOutputDTO = new GetHealthLogOutputDTO();
+            getHealthLogOutputDTO.Id = healthlog.Id;
+            getHealthLogOutputDTO.PreferenceId = healthlog.PreferenceId;
+            getHealthLogOutputDTO.value = healthlog.value;
+            getHealthLogOutputDTO.HealthStatus = healthlog.HealthStatus.ToString();
+
+            AddHealthLogInputDTO addHealthLogInputDTO = new AddHealthLogInputDTO();
+            addHealthLogInputDTO.PreferenceId = healthlog.PreferenceId;
+            addHealthLogInputDTO.value = healthlog.value;
+            getHealthLogOutputDTO.TargetStatus = await calculateTargetStatus(addHealthLogInputDTO, UserId);
+            getHealthLogOutputDTO.Created_at = healthlog.Created_at;
+            getHealthLogOutputDTO.Updated_at = healthlog.Updated_at;
+            return getHealthLogOutputDTO;
+        }
+
+        private async Task<string> calculateTargetStatus(AddHealthLogInputDTO healthLogInputDTO, int UserId)
+        {
+            try
+            {
+                var target = await _TargetService.GetTodaysTarget(healthLogInputDTO.PreferenceId, UserId);
+                if (healthLogInputDTO.value >= target.TargetMinValue && healthLogInputDTO.value <= target.TargetMaxValue)
+                {
+                    Target TargetToUpdate = await _TargetService.GetTargetById(target.Id);
+                    TargetToUpdate.TargetStatus = TargetStatusEnum.TargetStatus.Achieved;
+                    TargetToUpdate.Updated_at = DateTime.Now;
+                    await _TargetService.UpdateTargetRepo(TargetToUpdate);
+
+                    return TargetStatusEnum.TargetStatus.Achieved.ToString();
+                }
+                return TargetStatusEnum.TargetStatus.Not_Achieved.ToString();
+            }
+            catch(NoItemsFoundException) 
+            { 
+                return null;
+            }
+        }
+
+        private async Task<HealthStatusEnum.HealthStatus> calculateHealthStatus(AddHealthLogInputDTO healthlog, int UserId)
         {
             try
             {

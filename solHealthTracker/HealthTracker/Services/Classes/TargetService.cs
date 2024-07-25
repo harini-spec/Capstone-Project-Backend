@@ -95,6 +95,7 @@ namespace HealthTracker.Services.Classes
                     TargetToUpdate.TargetMinValue = updateTargetInputDTO.TargetMinValue;
                     TargetToUpdate.TargetMaxValue = updateTargetInputDTO.TargetMaxValue;
                     TargetToUpdate.TargetDate = updateTargetInputDTO.TargetDate;
+                    TargetToUpdate.TargetStatus = Models.ENUMs.TargetStatusEnum.TargetStatus.Not_Achieved;
                     TargetToUpdate.Updated_at = DateTime.Now;
                     await UpdateTargetRepo(TargetToUpdate);
                     return "Successfully updated!";

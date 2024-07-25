@@ -102,6 +102,7 @@ ENUM Gender         - Female, Male, Others
 `PUT/Target`
 - I/P: Target updated data 
 - Check if target already set for the given date
+- Status set back to not achieved
 - O/P: Update and msg status based on ideal range 
 
 `Get/Graph Data` 

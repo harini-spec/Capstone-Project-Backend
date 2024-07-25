@@ -23,13 +23,13 @@ namespace HealthTracker.Controllers
 
         [Authorize(Roles = "User")]
         [HttpPost("AddHealthLog")]
-        [ProducesResponseType(typeof(HealthLogOutputDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AddHealthLogOutputDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
 
-        public async Task<ActionResult<HealthLogOutputDTO>> AddHealthLog(HealthLogInputDTO healthLogInputDTO)
+        public async Task<ActionResult<AddHealthLogOutputDTO>> AddHealthLog(AddHealthLogInputDTO healthLogInputDTO)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +62,38 @@ namespace HealthTracker.Controllers
                 }
             }
             return BadRequest("All details are not provided. Please check the object");
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpGet("GetHealthLog")]
+        [ProducesResponseType(typeof(GetHealthLogOutputDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<GetHealthLogOutputDTO>> GetHealthLog(int PrefId)
+        {
+                try
+                {
+                    int UserId = -1;
+                    foreach (var claim in User.Claims)
+                    {
+                        if (claim.Type == "ID")
+                            UserId = Convert.ToInt32(claim.Value);
+                    }
+                    var result = await _HealthLogService.GetHealthLog(PrefId, UserId);
+                    return Ok(result);
+                }
+                catch (NoItemsFoundException nif)
+                {
+                    return NotFound(new ErrorModel(404, nif.Message));
+                }
+                catch (EntityNotFoundException enf)
+                {
+                    return NotFound(new ErrorModel(404, enf.Message));
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new ErrorModel(500, ex.Message));
+                }
         }
     }
 }
