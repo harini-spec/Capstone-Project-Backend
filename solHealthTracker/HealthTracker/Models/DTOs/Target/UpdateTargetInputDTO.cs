@@ -9,7 +9,7 @@ namespace HealthTracker.Models.DTOs.Target
         public int TargetId { get; set; }
 
         [Required]
-        public string MetricType { get; set; }
+        public int PreferenceId { get; set; }
 
         [Required]
         public float TargetMinValue { get; set; }

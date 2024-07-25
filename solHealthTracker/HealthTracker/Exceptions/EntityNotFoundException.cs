@@ -10,8 +10,9 @@ namespace HealthTracker.Exceptions
             msg = "Entity not found";
         }
 
-        public EntityNotFoundException(string? message) : base(message)
+        public EntityNotFoundException(string msg)
         {
+            this.msg = msg;
         }
 
         public override string Message => msg;

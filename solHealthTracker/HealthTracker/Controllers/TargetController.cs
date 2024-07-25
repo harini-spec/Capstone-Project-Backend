@@ -31,7 +31,7 @@ namespace HealthTracker.Controllers
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
 
-        public async Task<ActionResult<string>> Login(TargetInputDTO targetInputDTO)
+        public async Task<ActionResult<string>> AddTarget(TargetInputDTO targetInputDTO)
         {
             if (ModelState.IsValid)
             {
@@ -58,7 +58,7 @@ namespace HealthTracker.Controllers
                 {
                     return NotFound(new ErrorModel(404, enf.Message));
                 }
-                catch (TargetAlreadyExistsException tae)
+                catch (EntityAlreadyExistsException tae)
                 {
                     return Conflict(new ErrorModel(409, tae.Message));
                 }
@@ -75,7 +75,7 @@ namespace HealthTracker.Controllers
         [ProducesResponseType(typeof(TargetOutputDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<TargetOutputDTO>> GetTargetForToday(string MetricType)
+        public async Task<ActionResult<TargetOutputDTO>> GetTargetForToday(int PrefId)
         {
                 try
                 {
@@ -85,7 +85,7 @@ namespace HealthTracker.Controllers
                         if (claim.Type == "ID")
                             UserId = Convert.ToInt32(claim.Value);
                     }
-                    var result = await _TargetService.GetTodaysTarget(MetricType, UserId);
+                    var result = await _TargetService.GetTodaysTarget(PrefId, UserId);
                     return Ok(result);
                 }
                 catch (NoItemsFoundException nif)
@@ -138,7 +138,7 @@ namespace HealthTracker.Controllers
                 {
                     return NotFound(new ErrorModel(404, enf.Message));
                 }
-                catch (TargetAlreadyExistsException tae)
+                catch (EntityAlreadyExistsException tae)
                 {
                     return Conflict(new ErrorModel(409, tae.Message));
                 }

@@ -1,25 +1,6 @@
 ### User:
-`POST/Health log`
-    - I/P: value, metric
-    - Metric ID, User Id - user preference ID 
-    - Check if log already added for today i.e., check if preference id and today's date are present already 
-        - If so, send error - Already added
-
-    - Check data value against ideal value 
-        - Update the health status by comparing with ideal val table
-        - Add to output DTO
-
-    - Check data value against target if any set 
-        - Preference ID, start date, end date - recent datetime (latest in that range) - using this find target data GET/Target endpoint
-        - Check if value inside target range
-        - update target status 
-        - Add target status to Output DTO
-
-    - Add to health log 
-    - O/P: output DTO: Ideal status, target status 
-
 `GET/Health Log`
-    - I/P: Health log ID 
+    - I/P: pref Id
     - O/p: Health log data 
 
 `PUT/Update Health log` (update updated_at)

@@ -25,7 +25,7 @@ namespace HealthTrackerTest.RepositoryTests
             context = new HealthTrackerContext(optionsBuilder.Options);
             healthLogRepository = new HealthLogRepository(context);
             await healthLogRepository.Add(new HealthLog
-            { Id = 1, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, value = 10, HealthStatus = HealthStatusEnum.HealthStatus.Good });
+            { Id = 1, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, value = 10, HealthStatus = HealthStatusEnum.HealthStatus.Excellent });
 
 
         }
@@ -42,7 +42,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Action
             var result = await healthLogRepository.Add(new HealthLog
-            { Id = 2, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, value = 10, HealthStatus = HealthStatusEnum.HealthStatus.Good });
+            { Id = 2, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, value = 10, HealthStatus = HealthStatusEnum.HealthStatus.Excellent });
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -107,11 +107,11 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Arrange
             await healthLogRepository.Add(new HealthLog
-            { Id = 2, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, value = 10, HealthStatus = HealthStatusEnum.HealthStatus.Good });
+            { Id = 2, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, value = 10, HealthStatus = HealthStatusEnum.HealthStatus.Excellent });
 
             // Action
             var exception = Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => healthLogRepository.Update(new HealthLog
-            { Id = 3, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, value = 10, HealthStatus = HealthStatusEnum.HealthStatus.Good }));
+            { Id = 3, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, value = 10, HealthStatus = HealthStatusEnum.HealthStatus.Excellent }));
 
         }
 
@@ -121,7 +121,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Arrange
             var healthLog = await healthLogRepository.Add(new HealthLog
-            { Id = 2, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, value = 10, HealthStatus = HealthStatusEnum.HealthStatus.Good });
+            { Id = 2, PreferenceId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, value = 10, HealthStatus = HealthStatusEnum.HealthStatus.Excellent });
             healthLog.value = 10;
 
             // Action

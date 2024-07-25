@@ -25,7 +25,7 @@ namespace HealthTrackerTest.RepositoryTests
             context = new HealthTrackerContext(optionsBuilder.Options);
             idealDataRepository = new IdealDataRepository(context);
             await idealDataRepository.Add(new IdealData
-            { ID = 1, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, MinVal = 10, MaxVal = 12, HealthStatus = HealthStatusEnum.HealthStatus.Good });
+            { ID = 1, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, MinVal = 10, MaxVal = 12, HealthStatus = HealthStatusEnum.HealthStatus.Excellent });
         }
 
         [TearDown]
@@ -40,7 +40,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Action
             var result = await idealDataRepository.Add(new IdealData
-            { ID = 2, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, MinVal = 10, MaxVal = 12, HealthStatus = HealthStatusEnum.HealthStatus.Good });
+            { ID = 2, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, MinVal = 10, MaxVal = 12, HealthStatus = HealthStatusEnum.HealthStatus.Excellent });
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -105,11 +105,11 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Arrange
             await idealDataRepository.Add(new IdealData
-            { ID = 2, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, MinVal = 10, MaxVal = 12, HealthStatus = HealthStatusEnum.HealthStatus.Good });
+            { ID = 2, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, MinVal = 10, MaxVal = 12, HealthStatus = HealthStatusEnum.HealthStatus.Excellent });
 
             // Action
             var exception = Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => idealDataRepository.Update(new IdealData
-            { ID = 100, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, MinVal = 10, MaxVal = 12, HealthStatus = HealthStatusEnum.HealthStatus.Good }));
+            { ID = 100, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, MinVal = 10, MaxVal = 12, HealthStatus = HealthStatusEnum.HealthStatus.Excellent }));
         }
 
 
@@ -118,7 +118,7 @@ namespace HealthTrackerTest.RepositoryTests
         {
             // Arrange
             var idealData = await idealDataRepository.Add(new IdealData
-            { ID = 2, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, MinVal = 10, MaxVal = 12, HealthStatus = HealthStatusEnum.HealthStatus.Good });
+            { ID = 2, MetricId = 1, Created_at = DateTime.Now, Updated_at = DateTime.Now, MinVal = 10, MaxVal = 12, HealthStatus = HealthStatusEnum.HealthStatus.Excellent });
             idealData.MaxVal = 20;
 
             // Action

@@ -5,10 +5,9 @@
         public enum HealthStatus
         {
             Excellent,
-            Good,
             Fair, 
             Poor,
-            Critical
+            NoStatus
         }
     }
 }

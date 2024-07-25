@@ -8,7 +8,7 @@ namespace HealthTracker.Models.DTOs.Target
     public class TargetInputDTO
     {
         [Required]
-        public string MetricType { get; set; }
+        public int PreferenceId { get; set; }
 
         [Required]
         public float TargetMinValue { get; set; }

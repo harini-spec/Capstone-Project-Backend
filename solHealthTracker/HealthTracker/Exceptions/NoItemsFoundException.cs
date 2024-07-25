@@ -10,6 +10,11 @@ namespace HealthTracker.Exceptions
             msg = "No Items found!";
         }
 
+        public NoItemsFoundException(string msg)
+        {
+            this.msg = msg;
+        }
+
         public override string Message => msg;
     }
 }

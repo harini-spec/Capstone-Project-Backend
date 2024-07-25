@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics;
+using HealthTracker.Models.DTOs.MetricPreference;
 
 namespace HealthTracker.Controllers
 {
@@ -48,10 +49,10 @@ namespace HealthTracker.Controllers
 
         [Authorize(Roles = "User, Coach")]
         [HttpGet("GetPreferenceListOfUser")]
-        [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<PreferenceOutputDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<string>>> GetPreferencesListOfUser()
+        public async Task<ActionResult<List<PreferenceOutputDTO>>> GetPreferencesListOfUser()
         {
             try
             {

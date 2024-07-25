@@ -58,8 +58,8 @@ ENUM Gender         - Female, Male, Others
 - Get user ID from token 
 - O/P: List of user preferences
 
-`POST/Health log`
-- I/P: value, metric
+`POST/Health log` [No Health status for height (NoStatus will be health status), for weight -> BMI]
+- I/P: value, pref Id
 - Metric ID, User Id - user preference ID 
 - Check if log already added for today i.e., check if preference id and today's date are present already 
     - If so, send error - Already added
@@ -78,7 +78,7 @@ ENUM Gender         - Female, Male, Others
 - O/P: output DTO: Ideal status, target status 
 
 `GET/Health Log`
-- I/P: Health log ID 
+- I/P: Pref Id
 - O/p: Health log data 
 
 `PUT/Update Health log` 

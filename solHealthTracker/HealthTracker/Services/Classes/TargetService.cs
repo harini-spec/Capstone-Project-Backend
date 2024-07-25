@@ -17,7 +17,7 @@ namespace HealthTracker.Services.Classes
             _MetricService = metricService;
         }
 
-        public async Task<bool> IsAddTargetPossible(TargetInputDTO targetInputDTO, int UserId, int TargetId)
+        public async Task<bool> IsAddTargetPossible(TargetInputDTO targetInputDTO, int TargetId)
         {
             if (targetInputDTO.TargetDate.Date < DateTime.Now.Date)
                 throw new InvalidActionException("Can't create targets in the past");
@@ -32,7 +32,7 @@ namespace HealthTracker.Services.Classes
                     {
                         UserPreference pref = await _MetricService.FindUserPreferenceByPreferenceId(target.PreferenceId);
                         Metric metric = await _MetricService.GetMetricById(pref.MetricId);
-                        if (metric.MetricType == targetInputDTO.MetricType && pref.UserId == UserId)
+                        if (target.PreferenceId == targetInputDTO.PreferenceId)
                         {
                             found = true;
                             break;
@@ -52,26 +52,24 @@ namespace HealthTracker.Services.Classes
         {
             try
             {
-                if (await IsAddTargetPossible(targetInputDTO, UserId, -1))
+                if (await IsAddTargetPossible(targetInputDTO, -1))
                 {
-                    int prefId = await _MetricService.FindPreferenceIdFromMetricTypeAndUserId(targetInputDTO.MetricType, UserId);
-                    await _TargetRepository.Add(MapTargetInputDTOToTarget(targetInputDTO, prefId));
+                    await _TargetRepository.Add(MapTargetInputDTOToTarget(targetInputDTO));
                     return "Successfully added!";
                 }
-                else throw new TargetAlreadyExistsException();
+                else throw new EntityAlreadyExistsException("Target already exists for this date!");
 
             }
             catch (Exception)
             { throw; }
         }
 
-        public async Task<TargetOutputDTO> GetTodaysTarget(string MetricType, int UserId)
+        public async Task<TargetOutputDTO> GetTodaysTarget(int prefId, int UserId)
         {
             try
             {
                 DateTime current_date = DateTime.Now;
                 var targets = await _TargetRepository.GetAll();
-                int prefId = await _MetricService.FindPreferenceIdFromMetricTypeAndUserId(MetricType, UserId);
 
                 var filteredAndSortedTargets = targets
                 .Where(x => x.TargetDate.Date >= current_date.Date && x.PreferenceId == prefId && x.TargetStatus == Models.ENUMs.TargetStatusEnum.TargetStatus.Not_Achieved)
@@ -91,29 +89,46 @@ namespace HealthTracker.Services.Classes
             {
                 TargetInputDTO targetInputDTO = MapUpdateTargetDTOToTargetInputDTO(updateTargetInputDTO);
 
-                if (await IsAddTargetPossible(targetInputDTO, UserId, updateTargetInputDTO.TargetId))
+                if (await IsAddTargetPossible(targetInputDTO, updateTargetInputDTO.TargetId))
                 {
-                    int prefId = await _MetricService.FindPreferenceIdFromMetricTypeAndUserId(targetInputDTO.MetricType, UserId);
-
                     var TargetToUpdate = await _TargetRepository.GetById(updateTargetInputDTO.TargetId);
                     TargetToUpdate.TargetMinValue = updateTargetInputDTO.TargetMinValue;
                     TargetToUpdate.TargetMaxValue = updateTargetInputDTO.TargetMaxValue;
                     TargetToUpdate.TargetDate = updateTargetInputDTO.TargetDate;
                     TargetToUpdate.Updated_at = DateTime.Now;
-                    await _TargetRepository.Update(TargetToUpdate);
+                    await UpdateTargetRepo(TargetToUpdate);
                     return "Successfully updated!";
                 }
-                else throw new TargetAlreadyExistsException();
+                else throw new EntityAlreadyExistsException("Target already exists for this date!");
             }
             catch { throw; }
         }
+
+        public async Task<Target> GetTargetById(int TargetId)
+        {
+            try
+            {
+                return await _TargetRepository.GetById(TargetId);
+            }
+            catch { throw; }
+        }
+
+        public async Task UpdateTargetRepo(Target target)
+        {
+            try
+            {
+                await _TargetRepository.Update(target);
+            }
+            catch { throw; }
+        }
+
 
         #region Mappers
 
         private TargetInputDTO MapUpdateTargetDTOToTargetInputDTO(UpdateTargetInputDTO updateTargetInputDTO)
         {
             TargetInputDTO targetInputDTO = new TargetInputDTO();
-            targetInputDTO.MetricType = updateTargetInputDTO.MetricType;
+            targetInputDTO.PreferenceId = updateTargetInputDTO.PreferenceId;
             targetInputDTO.TargetMaxValue = updateTargetInputDTO.TargetMaxValue;
             targetInputDTO.TargetMinValue = updateTargetInputDTO.TargetMinValue;
             targetInputDTO.TargetDate = updateTargetInputDTO.TargetDate;
@@ -132,10 +147,10 @@ namespace HealthTracker.Services.Classes
             return targetOutputDTO;
         }
 
-        private Target MapTargetInputDTOToTarget(TargetInputDTO targetInputDTO, int prefId)
+        private Target MapTargetInputDTOToTarget(TargetInputDTO targetInputDTO)
         {
             Target target = new Target();
-            target.PreferenceId = prefId;
+            target.PreferenceId = targetInputDTO.PreferenceId;
             target.Created_at = DateTime.Now;
             target.Updated_at = DateTime.Now;
             target.TargetMaxValue = targetInputDTO.TargetMaxValue;

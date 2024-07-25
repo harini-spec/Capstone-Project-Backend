@@ -1,8 +1,10 @@
 ﻿using HealthTracker.Exceptions;
 using HealthTracker.Models.DBModels;
+using HealthTracker.Models.DTOs.MetricPreference;
 using HealthTracker.Repositories.Classes;
 using HealthTracker.Repositories.Interfaces;
 using HealthTracker.Services.Interfaces;
+using System.Collections.Generic;
 
 namespace HealthTracker.Services.Classes
 {
@@ -19,23 +21,6 @@ namespace HealthTracker.Services.Classes
             _UserPreferenceRepository = UserPreferenceRepository;
             _MetricRepository = metricRepository;
             _UserService = UserService;
-        }
-
-        public async Task<int> FindPreferenceIdFromMetricTypeAndUserId(string Metric_Type, int UserId)
-        {
-            try
-            {
-                var metric = await FindMetricByMetricType(Metric_Type);
-                var prefs = await _UserPreferenceRepository.GetAll();
-                var user_pref = prefs.ToList().SingleOrDefault(x => x.MetricId == metric.Id && x.UserId == UserId);
-                if (user_pref == null)
-                    throw new EntityNotFoundException("User Preference not found");
-                return user_pref.Id;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
         }
 
         public async Task<string> AddPreference(List<string> Preferences, int UserId, string Role)
@@ -159,31 +144,38 @@ namespace HealthTracker.Services.Classes
             }
         }
 
-        public async Task<List<string>> GetPreferencesListOfUser(int UserId, string Role)
+        public async Task<List<PreferenceOutputDTO>> GetPreferencesListOfUser(int UserId, string Role)
         {
             try
             {
+                List<PreferenceOutputDTO> result = new List<PreferenceOutputDTO>();
                 if (Role == "User")
                 {
                     var prefs = await GetAllPreferencesOfUser(UserId);
-                    List<string> result = new List<string>();
 
                     foreach (var pref in prefs)
                     {
+                        PreferenceOutputDTO preferenceOutputDTO = new PreferenceOutputDTO();
                         var metric = await _MetricRepository.GetById(pref.MetricId);
-                        result.Add(metric.MetricType.ToString());
+
+                        preferenceOutputDTO.PreferenceId = pref.Id;
+                        preferenceOutputDTO.MetricType = metric.MetricType.ToString();
+                        result.Add(preferenceOutputDTO);
                     }
                     return result;
                 }
                 else
                 {
                     var prefs = await GetAllMonitorPreferencesOfCoach(UserId);
-                    List<string> result = new List<string>();
 
                     foreach (var pref in prefs)
                     {
+                        PreferenceOutputDTO preferenceOutputDTO = new PreferenceOutputDTO();
                         var metric = await _MetricRepository.GetById(pref.MetricId);
-                        result.Add(metric.MetricType.ToString());
+
+                        preferenceOutputDTO.PreferenceId = pref.Id;
+                        preferenceOutputDTO.MetricType = metric.MetricType.ToString();
+                        result.Add(preferenceOutputDTO);
                     }
                     return result;
                 }
@@ -195,6 +187,32 @@ namespace HealthTracker.Services.Classes
             }
         }
 
+        public async Task<int> GetMetricIdFromPreferenceId(int PrefId)
+        {
+            try
+            {
+                var pref = await _UserPreferenceRepository.GetById(PrefId);
+                return pref.MetricId;
+            }
+            catch { throw; }
+        }
+
+        public async Task<int> FindPreferenceIdFromMetricTypeAndUserId(string MetricType, int UserId)
+        {
+            try
+            {
+                var metric = await FindMetricByMetricType(MetricType);
+                var prefs = await _UserPreferenceRepository.GetAll();
+                var user_pref = prefs.ToList().SingleOrDefault(x => x.MetricId == metric.Id && x.UserId == UserId);
+                if (user_pref == null)
+                    throw new EntityNotFoundException("User Preference not found");
+                return user_pref.Id;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
         #region Mappers
 

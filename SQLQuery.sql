@@ -12,6 +12,12 @@ select * from MonitorPreferences
 select * from Suggestions
 select * from Targets
 
+
+
+
+
+
 delete from MonitorPreferences
 delete from UserPreferences
 delete from Targets
+delete from HealthLogs
