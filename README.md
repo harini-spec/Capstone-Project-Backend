@@ -139,6 +139,6 @@ ENUM Gender         - Female, Male, Others
 - O/P: Successfully added 
 
 `GET/My Suggestions` 
-- I/P: -
+- I/P: UserId
 - Get coach ID from token 
-- O/P: List of suggestion DTOs with like 
+- O/P: List of suggestion DTOs

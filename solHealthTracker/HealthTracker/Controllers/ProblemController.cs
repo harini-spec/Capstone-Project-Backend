@@ -52,5 +52,33 @@ namespace HealthTracker.Controllers
                     return BadRequest(new ErrorModel(500, ex.Message));
                 }
         }
+
+        [Authorize(Roles = "Coach")]
+        [HttpPost("AddSuggestion")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<string>> AddSuggestion(SuggestionInputDTO suggestionDTO)
+        {
+            try
+            {
+                int CoachId = -1;
+                foreach (var claim in User.Claims)
+                {
+                    if (claim.Type == "ID")
+                        CoachId = Convert.ToInt32(claim.Value);
+                }
+                var result = await _ProblemService.AddSuggestion(suggestionDTO, CoachId);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ioe)
+            {
+                return UnprocessableEntity(new ErrorModel(422, ioe.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorModel(500, ex.Message));
+            }
+        }
     }
 }

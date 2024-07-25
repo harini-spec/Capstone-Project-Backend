@@ -76,7 +76,7 @@ namespace HealthTracker.Services.Classes
                 }
                 if (ResultLogs.Count == 0)
                     throw new NoItemsFoundException("No Log Records found!");
-                return MapHealthLogsToGraphDataOutputDTOs(ResultLogs);
+                return MapHealthLogsToGraphDataOutputDTOs(ResultLogs, UserId);
             }
             catch { throw; }
         }
@@ -84,23 +84,24 @@ namespace HealthTracker.Services.Classes
 
         #region Mappers
 
-        private List<GraphDataOutputDTO> MapHealthLogsToGraphDataOutputDTOs(List<HealthLog> healthLogs)
+        private List<GraphDataOutputDTO> MapHealthLogsToGraphDataOutputDTOs(List<HealthLog> healthLogs, int UserId)
         {
             List<GraphDataOutputDTO> result = new List<GraphDataOutputDTO>(); 
             foreach (var healthLog in healthLogs)
             {
-                result.Add(MapHealthLogToGraphDataOutputDTO(healthLog));
+                result.Add(MapHealthLogToGraphDataOutputDTO(healthLog, UserId));
             }
             return result;
         }
 
-        private GraphDataOutputDTO MapHealthLogToGraphDataOutputDTO(HealthLog healthLog)
+        private GraphDataOutputDTO MapHealthLogToGraphDataOutputDTO(HealthLog healthLog, int UserId)
         {
             GraphDataOutputDTO graphDataOutputDTO = new GraphDataOutputDTO();
             graphDataOutputDTO.LogId = healthLog.Id;
             graphDataOutputDTO.LogDate = healthLog.Created_at;
             graphDataOutputDTO.Value = healthLog.value;
             graphDataOutputDTO.HealthStatus = healthLog.HealthStatus.ToString();
+            graphDataOutputDTO.UserId = UserId;
             return graphDataOutputDTO;
         }
 

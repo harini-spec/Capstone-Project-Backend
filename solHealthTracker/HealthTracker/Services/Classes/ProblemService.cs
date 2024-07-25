@@ -10,13 +10,37 @@ namespace HealthTracker.Services.Classes
     {
         private readonly IRepository<int, HealthLog> _HealthLogRepository;
         private readonly IRepository<int, MonitorPreference> _MonitorPreferenceRepository;
+        private readonly IRepository<int, Suggestion> _SuggestionRepository;
         private readonly IMetricService _MetricService;
+        private readonly IUserService _UserService;
 
-        public ProblemService(IRepository<int, HealthLog> healthLogRepository, IRepository<int, MonitorPreference> monitorPreferenceRepository, IMetricService metricService)
+        public ProblemService(IRepository<int, HealthLog> healthLogRepository, IRepository<int, MonitorPreference> monitorPreferenceRepository, IMetricService metricService, IRepository<int, Suggestion> suggestionRepository, IUserService userService)
         {
             _HealthLogRepository = healthLogRepository;
             _MonitorPreferenceRepository = monitorPreferenceRepository;
             _MetricService = metricService;
+            _SuggestionRepository = suggestionRepository;
+            _UserService = userService;
+        }
+
+        public async Task<string> AddSuggestion(SuggestionInputDTO suggestionInputDTO, int CoachId)
+        {
+            try
+            {
+                var User = await _UserService.GetUserById(suggestionInputDTO.UserId);
+                if (User.Role.ToString() == "Coach")
+                    throw new InvalidActionException("Can't add suggestions for Coach!");
+
+                Suggestion SuggestionToBeAdded = new Suggestion();
+                SuggestionToBeAdded.UserId = suggestionInputDTO.UserId;
+                SuggestionToBeAdded.CoachId = CoachId;
+                SuggestionToBeAdded.Description = suggestionInputDTO.Suggestion;
+                SuggestionToBeAdded.Created_at = DateTime.Now;
+                SuggestionToBeAdded.Updated_at = DateTime.Now;
+                await _SuggestionRepository.Add(SuggestionToBeAdded);
+                return "Successfully Added!";
+            }
+            catch { throw; }
         }
 
         public async Task<List<ProblemOutputDTO>> GetUserIdsWithProblems(int CoachId)
@@ -50,7 +74,6 @@ namespace HealthTracker.Services.Classes
             }
             catch { throw; }
         }
-
 
 
         #region Mappers
