@@ -14,10 +14,6 @@ namespace HealthTracker.Models.DBModels
         public int PreferenceId { get; set; }
         public UserPreference HealthLogForPreference { get; set; }
 
-        public int? TargetId { get; set; }
-        [ForeignKey("TargetId")]
-        public Target? TargetForHealthLog { get; set; }
-
         public float value { get; set; }
         public HealthStatusEnum.HealthStatus HealthStatus { get; set; }
         public DateTime Created_at { get; set; }

@@ -9,7 +9,7 @@ namespace HealthTracker.Models.DTOs.Target
         public int PreferenceId { get; set; }
         public float TargetMinValue { get; set; }
         public float TargetMaxValue { get; set; }
-        public TargetStatusEnum.TargetStatus TargetStatus { get; set; }
+        public string TargetStatus { get; set; }
         public DateTime TargetDate { get; set; }
     }
 }

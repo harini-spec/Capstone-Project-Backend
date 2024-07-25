@@ -72,7 +72,7 @@ namespace HealthTracker.Services.Classes
                 var targets = await _TargetRepository.GetAll();
 
                 var filteredAndSortedTargets = targets
-                .Where(x => x.TargetDate.Date >= current_date.Date && x.PreferenceId == prefId && x.TargetStatus == Models.ENUMs.TargetStatusEnum.TargetStatus.Not_Achieved)
+                .Where(x => x.TargetDate.Date >= current_date.Date && x.PreferenceId == prefId)
                 .OrderBy(x => x.TargetDate)
                 .ToList();
 
@@ -141,7 +141,7 @@ namespace HealthTracker.Services.Classes
             TargetOutputDTO targetOutputDTO = new TargetOutputDTO();
             targetOutputDTO.Id = target.Id;
             targetOutputDTO.PreferenceId = target.PreferenceId;
-            targetOutputDTO.TargetStatus = target.TargetStatus;
+            targetOutputDTO.TargetStatus = target.TargetStatus.ToString();
             targetOutputDTO.TargetMinValue = target.TargetMinValue;
             targetOutputDTO.TargetMaxValue = target.TargetMaxValue;
             targetOutputDTO.TargetDate = target.TargetDate;

@@ -6,6 +6,7 @@ using HealthTracker.Models.ENUMs;
 using HealthTracker.Repositories.Interfaces;
 using HealthTracker.Services.Interfaces;
 using System.Collections.Immutable;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace HealthTracker.Services.Classes
 {
@@ -38,21 +39,11 @@ namespace HealthTracker.Services.Classes
             }
             catch (NoItemsFoundException)
             {
-                TargetOutputDTO target = null;
-                try
-                {
-                    target = await _TargetService.GetTodaysTarget(healthLogInputDTO.PreferenceId, UserId);
-                }
-                catch { }
                 HealthLog healthLog = new HealthLog();
                 healthLog.PreferenceId = healthLogInputDTO.PreferenceId;
                 healthLog.value = healthLogInputDTO.value;
                 healthLog.Created_at = DateTime.Now;
                 healthLog.Updated_at = DateTime.Now;
-                if (target == null)
-                    healthLog.TargetId = null;
-                else
-                    healthLog.TargetId = target.Id;
                 healthLog.HealthStatus = await calculateHealthStatus(healthLogInputDTO, UserId);
                 await _HealthLogRepository.Add(healthLog);
 
@@ -78,6 +69,41 @@ namespace HealthTracker.Services.Classes
             }
             catch { throw; }
         }
+
+    //`PUT/Update Health log` (update updated_at)
+    //- Do ideal value check and target value check - update both status in the DTO 
+    //- Update target status
+    //- O/P: output DTO: Ideal status, target status
+        //public async Task<AddHealthLogInputDTO> UpdateHealthLog(int HealthLogId, float value)
+        //{
+        //    HealthLog log = await _HealthLogRepository.GetById(HealthLogId);
+        //    if (log == null)
+        //        throw new EntityNotFoundException("Health Log not found!");
+
+        //    TargetOutputDTO target = null;
+        //    try
+        //    {
+        //        target = await _TargetService.GetTodaysTarget(healthLogInputDTO.PreferenceId, UserId);
+        //    }
+        //    catch { }
+        //    HealthLog healthLog = new HealthLog();
+        //    healthLog.PreferenceId = healthLogInputDTO.PreferenceId;
+        //    healthLog.value = healthLogInputDTO.value;
+        //    healthLog.Created_at = DateTime.Now;
+        //    healthLog.Updated_at = DateTime.Now;
+        //    if (target == null)
+        //        healthLog.TargetId = null;
+        //    else
+        //        healthLog.TargetId = target.Id;
+        //    healthLog.HealthStatus = await calculateHealthStatus(healthLogInputDTO, UserId);
+        //    await _HealthLogRepository.Add(healthLog);
+
+        //    AddHealthLogOutputDTO healthLogOutputDTO = new AddHealthLogOutputDTO();
+        //    healthLogOutputDTO.HealthLogId = healthLog.Id;
+        //    healthLogOutputDTO.HealthStatus = healthLog.HealthStatus.ToString();
+        //    healthLogOutputDTO.TargetStatus = await calculateTargetStatus(healthLogInputDTO, UserId);
+        //    return healthLogOutputDTO;
+        //}
 
         private async Task<GetHealthLogOutputDTO> MapHealthLogToGetHealthLogOutputDTO(HealthLog healthlog, int UserId)
         {
