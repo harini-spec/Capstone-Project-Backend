@@ -47,7 +47,13 @@ namespace HealthTracker.Services.Classes
         {
             try
             {
-                var AllMonitorPrefs = await _MonitorPreferenceRepository.GetAll();
+                var AllMonitorPrefs = new List<MonitorPreference>();
+                try
+                {
+                    AllMonitorPrefs = await _MonitorPreferenceRepository.GetAll();
+                }
+                catch { throw new NoItemsFoundException("No Monitor Preferences found!"); }
+
                 var CoachMonitorPrefs = AllMonitorPrefs.Where(pref => pref.CoachId == CoachId).ToList();
                 if (CoachMonitorPrefs.Count == 0)
                     throw new NoItemsFoundException("Coach Preferences not set!");
@@ -55,7 +61,7 @@ namespace HealthTracker.Services.Classes
                 var Logs = await _HealthLogRepository.GetAll();
                 var TodaysPoorLogs = Logs.Where(log => log.Created_at.Date == DateTime.Now.Date && log.HealthStatus == Models.ENUMs.HealthStatusEnum.HealthStatus.Poor).ToList();
                 if (TodaysPoorLogs.Count == 0)
-                    throw new NoItemsFoundException("No Logs for today!");
+                    throw new NoItemsFoundException("No Problems Logs for today!");
 
                 var Result = new List<HealthLog>();
                 foreach (var coach_pref in CoachMonitorPrefs)
@@ -68,7 +74,7 @@ namespace HealthTracker.Services.Classes
                     }
                 }
                 if(Result.Count == 0)
-                    throw new NoItemsFoundException("No Problems for today!");
+                    throw new NoItemsFoundException("No Problems Logs for today!");
 
                 return await MapHealthLogsToDictionary(Result);
             }
@@ -129,8 +135,6 @@ namespace HealthTracker.Services.Classes
 
         private async Task<List<ProblemOutputDTO>> MapHealthLogsToDictionary(List<HealthLog> result)
         {
-            try
-            {
                 List<ProblemOutputDTO> problemOutputDTOs = new List<ProblemOutputDTO>();
                 Dictionary<int, List<string>> UserIdWithMetrics = new Dictionary<int, List<string>>();
 
@@ -149,8 +153,6 @@ namespace HealthTracker.Services.Classes
                     }
                 }
                 return MapDictionaryToProblemOutputDTOs(UserIdWithMetrics);
-            }
-            catch { throw; }
         }
 
         private List<ProblemOutputDTO> MapDictionaryToProblemOutputDTOs(Dictionary<int, List<string>> userIdWithMetrics)
