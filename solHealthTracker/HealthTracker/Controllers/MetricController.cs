@@ -18,7 +18,6 @@ namespace HealthTracker.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors]
-    [ExcludeFromCodeCoverage]
     public class MetricController : ControllerBase
     {
         private readonly IMetricService _MetricService;

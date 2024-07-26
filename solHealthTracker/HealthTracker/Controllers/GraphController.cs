@@ -13,7 +13,6 @@ namespace HealthTracker.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ExcludeFromCodeCoverage]
     public class GraphController : ControllerBase
     {
         private readonly IGraphService _GraphService;
