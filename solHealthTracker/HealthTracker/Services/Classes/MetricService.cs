@@ -27,15 +27,26 @@ namespace HealthTracker.Services.Classes
         {
             try
             {
-                User user = await _UserService.GetUserById(UserId);
-                if (user == null)
+                User user = new User();
+                try
+                {
+                    user = await _UserService.GetUserById(UserId);
+                }
+                catch
+                {
                     throw new UnauthorizedUserException("You are not logged in!");
+                }
 
                 if (Role == "User")
                 {
                     foreach (var preference in Preferences)
                     {
-                        var prefs = await _UserPreferenceRepository.GetAll();
+                        var prefs = new List<UserPreference>();
+                        try
+                        {
+                            prefs = await _UserPreferenceRepository.GetAll();
+                        }
+                        catch { }
                         var Metric = await FindMetricByMetricType(preference);
                         if (prefs.Where(pref => pref.UserId == UserId && pref.MetricId == Metric.Id).ToList().Count != 0)
                             throw new EntityAlreadyExistsException("User Preference already exists. Choose again!");
@@ -51,7 +62,12 @@ namespace HealthTracker.Services.Classes
                 {
                     foreach (var preference in Preferences)
                     {
-                        var prefs = await _MonitorPreferenceRepository.GetAll();
+                        var prefs = new List<MonitorPreference>();
+                        try
+                        {
+                            prefs = await _MonitorPreferenceRepository.GetAll();
+                        }
+                        catch { }
                         var Metric = await FindMetricByMetricType(preference);
                         if (prefs.Where(pref => pref.CoachId == UserId && pref.MetricId == Metric.Id).ToList().Count != 0)
                             throw new EntityAlreadyExistsException("Monitor Preference already exists. Choose again!");
@@ -228,8 +244,6 @@ namespace HealthTracker.Services.Classes
 
         private async Task<UserPreference> MapUserPreferenceStringToUserPreference(string preference, int UserId)
         {
-            try
-            {
                 UserPreference userPref = new UserPreference();
                 userPref.UserId = UserId;
                 userPref.Created_at = DateTime.Now;
@@ -239,17 +253,10 @@ namespace HealthTracker.Services.Classes
                 userPref.MetricId = metric.Id;
 
                 return userPref;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
         }
 
         private async Task<MonitorPreference> MapMonitorPreferenceStringToMonitorPreference(string preference, int userId)
         {
-            try
-            {
                 MonitorPreference monitorPref = new MonitorPreference();
                 monitorPref.CoachId = userId;
                 monitorPref.Created_at = DateTime.Now;
@@ -259,11 +266,6 @@ namespace HealthTracker.Services.Classes
                 monitorPref.MetricId = metric.Id;
 
                 return monitorPref;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
         }
 
         #endregion

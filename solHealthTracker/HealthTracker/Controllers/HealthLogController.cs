@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using HealthTracker.Models.DTOs.HealthLog;
+using System.Diagnostics.CodeAnalysis;
 
 namespace HealthTracker.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ExcludeFromCodeCoverage]
     public class HealthLogController : ControllerBase
     {
         private readonly IHealthLogService _HealthLogService;

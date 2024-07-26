@@ -33,7 +33,7 @@ namespace HealthTrackerTest.ServiceTests
         [SetUp]
         public void Setup()
         {
-            DbContextOptionsBuilder optionsBuilder = new DbContextOptionsBuilder().UseInMemoryDatabase("UserAndCustomerDB");
+            DbContextOptionsBuilder optionsBuilder = new DbContextOptionsBuilder().UseInMemoryDatabase("UserServiceDB");
             context = new HealthTrackerContext(optionsBuilder.Options);
 
             UserRepo = new UserRepository(context);
@@ -60,8 +60,7 @@ namespace HealthTrackerTest.ServiceTests
                 Role = "User"
             };
 
-            // Action
-            var result = userService.RegisterUser(User);
+            userService.RegisterUser(User);
         }
 
         [TearDown]

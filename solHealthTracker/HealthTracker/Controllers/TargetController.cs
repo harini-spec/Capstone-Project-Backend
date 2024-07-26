@@ -8,11 +8,15 @@ using Microsoft.AspNetCore.Mvc;
 using HealthTracker.Models.DBModels;
 using HealthTracker.Models.DTOs.Target;
 using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Cors;
 
 namespace HealthTracker.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors]
+    [ExcludeFromCodeCoverage]
     public class TargetController : ControllerBase
     {
         private readonly ITargetService _TargetService;

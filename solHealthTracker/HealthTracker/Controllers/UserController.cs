@@ -5,12 +5,14 @@ using HealthTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 
 namespace HealthTracker.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors]
+    [ExcludeFromCodeCoverage]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;

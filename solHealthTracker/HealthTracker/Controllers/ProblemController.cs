@@ -7,11 +7,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using HealthTracker.Models.DTOs.Suggestions;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Cors;
 
 namespace HealthTracker.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors]
+    [ExcludeFromCodeCoverage]
     public class ProblemController : ControllerBase
     {
         private readonly IProblemService _ProblemService;

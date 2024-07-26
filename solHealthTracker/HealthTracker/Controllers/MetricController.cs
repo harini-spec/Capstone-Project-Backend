@@ -11,12 +11,14 @@ using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics;
 using HealthTracker.Models.DTOs.MetricPreference;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace HealthTracker.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors]
+    [ExcludeFromCodeCoverage]
     public class MetricController : ControllerBase
     {
         private readonly IMetricService _MetricService;

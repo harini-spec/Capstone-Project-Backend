@@ -158,7 +158,15 @@ namespace HealthTracker.Services.Classes
                 float BMI_Val = 0;
                 if(Metric.MetricType == "Weight")
                 {
-                    var healthlogs = await _HealthLogRepository.GetAll();
+                    var healthlogs = new List<HealthLog>();
+                    try
+                    {
+                        healthlogs = await _HealthLogRepository.GetAll();
+                    }
+                    catch
+                    {
+                        throw new EntityNotFoundException("Height Log not entered");
+                    }
                     int prefId = await _MetricService.FindPreferenceIdFromMetricTypeAndUserId("Height", UserId);
                     var heightlogs = healthlogs.Where(log => log.PreferenceId == prefId).OrderBy(x => x.Created_at).ToList();
                     if (heightlogs.Count == 0)
