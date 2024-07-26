@@ -50,7 +50,11 @@ namespace HealthTracker.Services.Classes
                 AddHealthLogOutputDTO healthLogOutputDTO = new AddHealthLogOutputDTO();
                 healthLogOutputDTO.HealthLogId = healthLog.Id;
                 healthLogOutputDTO.HealthStatus = healthLog.HealthStatus.ToString();
-                healthLogOutputDTO.TargetStatus = await _TargetService.calculateTargetStatus(healthLogInputDTO, UserId);
+                try
+                {
+                    healthLogOutputDTO.TargetStatus = await _TargetService.calculateTargetStatus(healthLogInputDTO, UserId);
+                }
+                catch(NoItemsFoundException) { healthLogOutputDTO.TargetStatus = null; }
                 return healthLogOutputDTO;
             }
         }

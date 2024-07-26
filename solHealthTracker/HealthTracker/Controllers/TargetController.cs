@@ -40,13 +40,7 @@ namespace HealthTracker.Controllers
             {
                 try
                 {
-                    int UserId = -1;
-                    foreach (var claim in User.Claims)
-                    {
-                        if (claim.Type == "ID")
-                            UserId = Convert.ToInt32(claim.Value);
-                    }
-                    var result = await _TargetService.AddTarget(targetInputDTO, UserId);
+                    var result = await _TargetService.AddTarget(targetInputDTO);
                     return Ok(result);
                 }
                 catch (InvalidOperationException ioe)
@@ -120,13 +114,7 @@ namespace HealthTracker.Controllers
             {
                 try
                 {
-                    int UserId = -1;
-                    foreach (var claim in User.Claims)
-                    {
-                        if (claim.Type == "ID")
-                            UserId = Convert.ToInt32(claim.Value);
-                    }
-                    var result = await _TargetService.UpdateTarget(targetInputDTO, UserId);
+                    var result = await _TargetService.UpdateTarget(targetInputDTO);
                     return Ok(result);
                 }
                 catch (InvalidOperationException ioe)

@@ -30,7 +30,7 @@ namespace HealthTrackerTest.ServiceTests
         [SetUp]
         public async Task Setup()
         {
-            DbContextOptionsBuilder optionsBuilder = new DbContextOptionsBuilder().UseInMemoryDatabase("HealthLogDB");
+            DbContextOptionsBuilder optionsBuilder = new DbContextOptionsBuilder().UseInMemoryDatabase("GraphDB");
             context = new HealthTrackerContext(optionsBuilder.Options);
 
             HealthLogRepository = new HealthLogRepository(context);

@@ -396,6 +396,35 @@ namespace HealthTrackerTest.ServiceTests
         }
 
         [Test]
+        public async Task GetHealthLogNoFilteredTargetSuccessTest()
+        {
+            // Arrange
+            Target target = new Target()
+            {
+                PreferenceId = 1,
+                TargetMinValue = 9,
+                TargetMaxValue = 10,
+                TargetDate = DateTime.Now.AddDays(-3),
+                Created_at = DateTime.Now,
+                Updated_at = DateTime.Now
+
+            };
+            await TargetRepository.Add(target);
+            AddHealthLogInputDTO addHealthLogInputDTO = new AddHealthLogInputDTO()
+            {
+                PreferenceId = 1,
+                value = 8
+            };
+            ;
+
+            // Action
+            var result = await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1);
+
+            // Assert
+            Assert.That(result.TargetStatus, Is.Null);
+        }
+
+        [Test]
         public async Task GetHealthLogNotFoundExceptionTest()
         {
             // Arrange

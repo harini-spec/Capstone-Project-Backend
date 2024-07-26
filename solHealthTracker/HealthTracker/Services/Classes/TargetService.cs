@@ -21,8 +21,12 @@ namespace HealthTracker.Services.Classes
 
         public async Task<bool> IsAddTargetPossible(TargetInputDTO targetInputDTO, int TargetId)
         {
-            if (targetInputDTO.TargetDate.Date < DateTime.Now.Date)
-                throw new InvalidActionException("Can't create targets in the past");
+            try
+            {
+                if (targetInputDTO.TargetDate.Date < DateTime.Now.Date)
+                    throw new InvalidActionException("Can't create targets in the past");
+            }
+            catch { throw; }
 
             try
             {
@@ -50,7 +54,7 @@ namespace HealthTracker.Services.Classes
             catch { throw; }
         }
 
-        public async Task<string> AddTarget(TargetInputDTO targetInputDTO, int UserId)
+        public async Task<string> AddTarget(TargetInputDTO targetInputDTO)
         {
             try
             {
@@ -113,7 +117,7 @@ namespace HealthTracker.Services.Classes
             }
         }
 
-        public async Task<string> UpdateTarget(UpdateTargetInputDTO updateTargetInputDTO, int UserId)
+        public async Task<string> UpdateTarget(UpdateTargetInputDTO updateTargetInputDTO)
         {
             try
             {
