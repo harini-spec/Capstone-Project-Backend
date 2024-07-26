@@ -1,6 +1,8 @@
 ﻿using HealthTracker.Exceptions;
 using HealthTracker.Models.DBModels;
+using HealthTracker.Models.DTOs.HealthLog;
 using HealthTracker.Models.DTOs.Target;
+using HealthTracker.Models.ENUMs;
 using HealthTracker.Repositories.Interfaces;
 using HealthTracker.Services.Interfaces;
 
@@ -81,6 +83,34 @@ namespace HealthTracker.Services.Classes
                 return MapTargetToTargetOutputDTO(filteredAndSortedTargets[0]);
             }
             catch { throw; }
+        }
+
+        public async Task<string> calculateTargetStatus(AddHealthLogInputDTO healthLogInputDTO, int UserId)
+        {
+            try
+            {
+                var target = await GetTodaysTarget(healthLogInputDTO.PreferenceId, UserId);
+
+                Target TargetToUpdate = await GetTargetById(target.Id);
+                TargetToUpdate.Updated_at = DateTime.Now;
+
+                if (healthLogInputDTO.value >= target.TargetMinValue && healthLogInputDTO.value <= target.TargetMaxValue)
+                {
+                    TargetToUpdate.TargetStatus = TargetStatusEnum.TargetStatus.Achieved;
+                    await UpdateTargetRepo(TargetToUpdate);
+                    return TargetStatusEnum.TargetStatus.Achieved.ToString();
+                }
+                else
+                {
+                    TargetToUpdate.TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved;
+                    await UpdateTargetRepo(TargetToUpdate);
+                    return TargetStatusEnum.TargetStatus.Not_Achieved.ToString();
+                }
+            }
+            catch (NoItemsFoundException)
+            {
+                return null;
+            }
         }
 
         public async Task<string> UpdateTarget(UpdateTargetInputDTO updateTargetInputDTO, int UserId)

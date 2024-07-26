@@ -50,7 +50,7 @@ namespace HealthTracker.Services.Classes
                 AddHealthLogOutputDTO healthLogOutputDTO = new AddHealthLogOutputDTO();
                 healthLogOutputDTO.HealthLogId = healthLog.Id;
                 healthLogOutputDTO.HealthStatus = healthLog.HealthStatus.ToString();
-                healthLogOutputDTO.TargetStatus = await calculateTargetStatus(healthLogInputDTO, UserId);
+                healthLogOutputDTO.TargetStatus = await _TargetService.calculateTargetStatus(healthLogInputDTO, UserId);
                 return healthLogOutputDTO;
             }
         }
@@ -88,57 +88,12 @@ namespace HealthTracker.Services.Classes
                 AddHealthLogOutputDTO healthLogOutputDTO = new AddHealthLogOutputDTO();
                 healthLogOutputDTO.HealthLogId = log.Id;
                 healthLogOutputDTO.HealthStatus = log.HealthStatus.ToString();
-                healthLogOutputDTO.TargetStatus = await calculateTargetStatus(healthLogInput, UserId);
+                healthLogOutputDTO.TargetStatus = await _TargetService.calculateTargetStatus(healthLogInput, UserId);
                 return healthLogOutputDTO;
             }
             catch
             {
                 throw;
-            }
-        }
-
-        private async Task<GetHealthLogOutputDTO> MapHealthLogToGetHealthLogOutputDTO(HealthLog healthlog, int UserId)
-        {
-            GetHealthLogOutputDTO getHealthLogOutputDTO = new GetHealthLogOutputDTO();
-            getHealthLogOutputDTO.Id = healthlog.Id;
-            getHealthLogOutputDTO.PreferenceId = healthlog.PreferenceId;
-            getHealthLogOutputDTO.value = healthlog.value;
-            getHealthLogOutputDTO.HealthStatus = healthlog.HealthStatus.ToString();
-
-            AddHealthLogInputDTO addHealthLogInputDTO = new AddHealthLogInputDTO();
-            addHealthLogInputDTO.PreferenceId = healthlog.PreferenceId;
-            addHealthLogInputDTO.value = healthlog.value;
-            getHealthLogOutputDTO.TargetStatus = await calculateTargetStatus(addHealthLogInputDTO, UserId);
-            getHealthLogOutputDTO.Created_at = healthlog.Created_at;
-            getHealthLogOutputDTO.Updated_at = healthlog.Updated_at;
-            return getHealthLogOutputDTO;
-        }
-
-        private async Task<string> calculateTargetStatus(AddHealthLogInputDTO healthLogInputDTO, int UserId)
-        {
-            try
-            {
-                var target = await _TargetService.GetTodaysTarget(healthLogInputDTO.PreferenceId, UserId);
-
-                Target TargetToUpdate = await _TargetService.GetTargetById(target.Id);
-                TargetToUpdate.Updated_at = DateTime.Now;
-
-                if (healthLogInputDTO.value >= target.TargetMinValue && healthLogInputDTO.value <= target.TargetMaxValue)
-                {
-                    TargetToUpdate.TargetStatus = TargetStatusEnum.TargetStatus.Achieved;
-                    await _TargetService.UpdateTargetRepo(TargetToUpdate);
-                    return TargetStatusEnum.TargetStatus.Achieved.ToString();
-                }
-                else
-                {
-                    TargetToUpdate.TargetStatus = TargetStatusEnum.TargetStatus.Not_Achieved;
-                    await _TargetService.UpdateTargetRepo(TargetToUpdate);
-                    return TargetStatusEnum.TargetStatus.Not_Achieved.ToString();
-                }
-            }
-            catch(NoItemsFoundException) 
-            { 
-                return null;
             }
         }
 
@@ -199,7 +154,27 @@ namespace HealthTracker.Services.Classes
                 throw new NoItemsFoundException("No Ideal Value data found!");
             }
             catch { throw; }
-
         }
+
+        #region Mappers
+
+        private async Task<GetHealthLogOutputDTO> MapHealthLogToGetHealthLogOutputDTO(HealthLog healthlog, int UserId)
+        {
+            GetHealthLogOutputDTO getHealthLogOutputDTO = new GetHealthLogOutputDTO();
+            getHealthLogOutputDTO.Id = healthlog.Id;
+            getHealthLogOutputDTO.PreferenceId = healthlog.PreferenceId;
+            getHealthLogOutputDTO.value = healthlog.value;
+            getHealthLogOutputDTO.HealthStatus = healthlog.HealthStatus.ToString();
+
+            AddHealthLogInputDTO addHealthLogInputDTO = new AddHealthLogInputDTO();
+            addHealthLogInputDTO.PreferenceId = healthlog.PreferenceId;
+            addHealthLogInputDTO.value = healthlog.value;
+            getHealthLogOutputDTO.TargetStatus = await _TargetService.calculateTargetStatus(addHealthLogInputDTO, UserId);
+            getHealthLogOutputDTO.Created_at = healthlog.Created_at;
+            getHealthLogOutputDTO.Updated_at = healthlog.Updated_at;
+            return getHealthLogOutputDTO;
+        }
+
+        #endregion
     }
 }
