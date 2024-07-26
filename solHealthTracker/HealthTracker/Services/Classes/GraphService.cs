@@ -30,7 +30,7 @@ namespace HealthTracker.Services.Classes
         public DateTime GetPreviousSunday()
         {
             DateTime currentDate = DateTime.Now;
-            int daysToSubtract = (int)currentDate.DayOfWeek + 1; // Sunday is 0, so add 1 to get the previous Sunday
+            int daysToSubtract = (int)currentDate.DayOfWeek + 7; // Sunday is 0, so add 1 to get the previous Sunday
 
             DateTime previousSunday = currentDate.AddDays(-daysToSubtract);
             return previousSunday.Date;

@@ -16,7 +16,6 @@ namespace HealthTracker.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors]
-    [ExcludeFromCodeCoverage]
     public class TargetController : ControllerBase
     {
         private readonly ITargetService _TargetService;
