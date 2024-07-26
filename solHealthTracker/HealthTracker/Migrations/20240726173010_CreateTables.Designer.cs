@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthTracker.Migrations
 {
     [DbContext(typeof(HealthTrackerContext))]
-    [Migration("20240724061212_init")]
-    partial class init
+    [Migration("20240726173010_CreateTables")]
+    partial class CreateTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -161,9 +161,6 @@ namespace HealthTracker.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsLiked")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("Updated_at")
                         .HasColumnType("datetime2");
 
@@ -190,13 +187,10 @@ namespace HealthTracker.Migrations
                     b.Property<DateTime>("Created_at")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("PreferenceId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<DateTime>("TargetDate")
                         .HasColumnType("datetime2");
 
                     b.Property<float>("TargetMaxValue")
@@ -249,6 +243,9 @@ namespace HealthTracker.Migrations
 
                     b.Property<DateTime>("Updated_at")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("is_preferenceSet")
+                        .HasColumnType("bit");
 
                     b.HasKey("UserId");
 
