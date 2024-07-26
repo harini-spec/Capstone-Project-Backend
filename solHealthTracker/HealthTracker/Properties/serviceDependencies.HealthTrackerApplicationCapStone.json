@@ -5,17 +5,12 @@
       "type": "apis.azure"
     },
     "secrets1": {
-      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/HealthTrackerApplicationCapStone/providers/Microsoft.ServiceLinker/linkers/VaultUri_B0B78F2889",
-      "secretStore": "AzureAppSettings",
-      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.KeyVault/vaults/kvHealthTracker",
-      "type": "secrets.keyVault",
-      "connectionId": "VaultUri"
+      "ignored": "true",
+      "type": "secrets.keyVault"
     },
     "mssql1": {
-      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/HealthTrackerApplicationCapStone/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsdefaultConnection_92AC0FF95F",
-      "secretStore": "AzureKeyVault",
-      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/serverhealthtracker/databases/dbHealthTracker",
-      "type": "mssql.azure",
+      "ignored": "true",
+      "type": "mssql",
       "connectionId": "ConnectionStrings:defaultConnection"
     }
   }
