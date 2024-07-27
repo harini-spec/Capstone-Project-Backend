@@ -84,7 +84,7 @@ namespace HealthTracker.Services.Classes
 
                 if(filteredAndSortedTargets.Count == 0)
                     throw new NoItemsFoundException();
-                return MapTargetToTargetOutputDTO(filteredAndSortedTargets[0]);
+                return await MapTargetToTargetOutputDTO(filteredAndSortedTargets[0]);
             }
             catch { throw; }
         }
@@ -172,7 +172,7 @@ namespace HealthTracker.Services.Classes
             try
             {
                 Target target = await GetTargetById(TargetId);
-                return MapTargetToTargetOutputDTO(target);
+                return await MapTargetToTargetOutputDTO(target);
             }
             catch { throw; }
         }
@@ -182,11 +182,15 @@ namespace HealthTracker.Services.Classes
             try
             {
                 var Targets = await _TargetRepository.GetAll();
-                var TargetsOfPrefId = Targets.Where(target => target.PreferenceId == prefId).OrderBy(target => target.TargetDate);
+                var TargetsOfPrefId = Targets.Where(target => target.PreferenceId == prefId && target.TargetDate.Date >= DateTime.Now.Date).OrderBy(target => target.TargetDate).ToList();
+                if(TargetsOfPrefId.Count == 0)
+                {
+                    throw new NoItemsFoundException("No Targets found!");
+                }
                 var result = new List<TargetOutputDTO>();
                 foreach(var Target in TargetsOfPrefId)
                 {
-                    result.Add(MapTargetToTargetOutputDTO(Target));
+                    result.Add(await MapTargetToTargetOutputDTO(Target));
                 }
                 return result;
             }
@@ -206,16 +210,24 @@ namespace HealthTracker.Services.Classes
             return targetInputDTO;
         }
 
-        private TargetOutputDTO MapTargetToTargetOutputDTO(Target target)
+        private async Task<TargetOutputDTO> MapTargetToTargetOutputDTO(Target target)
         {
-            TargetOutputDTO targetOutputDTO = new TargetOutputDTO();
-            targetOutputDTO.Id = target.Id;
-            targetOutputDTO.PreferenceId = target.PreferenceId;
-            targetOutputDTO.TargetStatus = target.TargetStatus.ToString();
-            targetOutputDTO.TargetMinValue = target.TargetMinValue;
-            targetOutputDTO.TargetMaxValue = target.TargetMaxValue;
-            targetOutputDTO.TargetDate = target.TargetDate;
-            return targetOutputDTO;
+            try
+            {
+                var metricId = await _MetricService.GetMetricIdFromPreferenceId(target.PreferenceId);
+                var Metric = await _MetricService.GetMetricById(metricId);
+
+                TargetOutputDTO targetOutputDTO = new TargetOutputDTO();
+                targetOutputDTO.Id = target.Id;
+                targetOutputDTO.PreferenceId = target.PreferenceId;
+                targetOutputDTO.TargetStatus = target.TargetStatus.ToString();
+                targetOutputDTO.TargetMinValue = target.TargetMinValue;
+                targetOutputDTO.TargetMaxValue = target.TargetMaxValue;
+                targetOutputDTO.TargetDate = target.TargetDate;
+                targetOutputDTO.MetricUnit = Metric.MetricUnit;
+                return targetOutputDTO;
+            }
+            catch { throw; }
         }
 
         private Target MapTargetInputDTOToTarget(TargetInputDTO targetInputDTO)

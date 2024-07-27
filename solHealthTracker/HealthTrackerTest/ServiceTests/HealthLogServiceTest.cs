@@ -336,7 +336,7 @@ namespace HealthTrackerTest.ServiceTests
             var result = await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1);
 
             // Assert
-            Assert.That(result.HealthStatus, Is.EqualTo("NoStatus"));
+            Assert.That(result.HealthStatus, Is.EqualTo("No_Status"));
         }
 
         [Test]

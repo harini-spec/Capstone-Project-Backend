@@ -272,5 +272,106 @@ namespace HealthTrackerTest.ServiceTests
             // Assert
             Assert.That(exception.Message, Is.EqualTo("Target already exists for this date!"));
         }
+
+        [Test]
+        public async Task GetTargetDTOByIDFailTest()
+        {
+            // Action
+            var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await TargetService.GetTargetDTOById(100));
+        }
+
+        [Test]
+        public async Task GetTargetDTOByIDSuccessTest()
+        {
+            // Arrange 
+            TargetInputDTO target1 = new TargetInputDTO()
+            {
+                PreferenceId = 1,
+                TargetMinValue = 8,
+                TargetMaxValue = 10,
+                TargetDate = DateTime.Now
+            };
+            await TargetService.AddTarget(target1);
+
+            // Action
+            var result = await TargetService.GetTargetDTOById(1);
+
+            // Assert
+            Assert.That(result.TargetMinValue, Is.EqualTo(8));
+        }
+
+        [Test]
+        public async Task DeleteTargetByIDFailTest()
+        {
+            // Action
+            var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await TargetService.DeleteTargetById(100));
+        }
+
+        [Test]
+        public async Task DeleteTargetByIDSuccessTest()
+        {
+            // Arrange 
+            TargetInputDTO target1 = new TargetInputDTO()
+            {
+                PreferenceId = 1,
+                TargetMinValue = 8,
+                TargetMaxValue = 10,
+                TargetDate = DateTime.Now
+            };
+            await TargetService.AddTarget(target1);
+
+            // Action
+            var result = await TargetService.DeleteTargetById(1);
+
+            // Assert
+            Assert.That(result, Is.EqualTo("Successfully deleted!"));
+        }
+
+        [Test]
+        public async Task DeleteAllTargetsByPrefIDFailTest()
+        {
+            // Action
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await TargetService.GetTargetsOfPreferenceId(1));
+        }
+
+        [Test]
+        public async Task DeleteAllTargetsByPrefIDSuccessTest()
+        {
+            // Arrange 
+            TargetInputDTO target1 = new TargetInputDTO()
+            {
+                PreferenceId = 1,
+                TargetMinValue = 8,
+                TargetMaxValue = 10,
+                TargetDate = DateTime.Now
+            };
+            await TargetService.AddTarget(target1);
+
+            // Action
+            var result = await TargetService.GetTargetsOfPreferenceId(1);
+
+            // Assert
+            Assert.That(result.Count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task DeleteAllTargetsByPrefIDExceptionTest()
+        {
+            // Arrange 
+            TargetInputDTO target1 = new TargetInputDTO()
+            {
+                PreferenceId = 1,
+                TargetMinValue = 8,
+                TargetMaxValue = 10,
+                TargetDate = DateTime.Now
+            };
+            await TargetService.AddTarget(target1);
+
+            // Action
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await TargetService.GetTargetsOfPreferenceId(100));
+
+            // Assert
+            Assert.That(exception.Message, Is.EqualTo("No Targets found!"));
+        }
     }
 }

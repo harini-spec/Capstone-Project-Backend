@@ -100,6 +100,76 @@ namespace HealthTracker.Controllers
         }
 
         [Authorize(Roles = "User")]
+        [HttpGet("GetTargetById")]
+        [ProducesResponseType(typeof(TargetOutputDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<TargetOutputDTO>> GetTargetById(int TargetId)
+        {
+            try
+            {
+                var result = await _TargetService.GetTargetDTOById(TargetId);
+                return Ok(result);
+            }
+            catch (EntityNotFoundException enf)
+            {
+                return NotFound(new ErrorModel(404, enf.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorModel(500, ex.Message));
+            }
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpGet("GetAllTargetsByPrefId")]
+        [ProducesResponseType(typeof(List<TargetOutputDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<List<TargetOutputDTO>>> GetAllTargetsByPrefId(int PrefId)
+        {
+            try
+            {
+                var result = await _TargetService.GetTargetsOfPreferenceId(PrefId);
+                return Ok(result);
+            }
+            catch (EntityNotFoundException enf)
+            {
+                return NotFound(new ErrorModel(404, enf.Message));
+            }
+            catch (NoItemsFoundException nif)
+            {
+                return NotFound(new ErrorModel(404, nif.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorModel(500, ex.Message));
+            }
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpDelete("DeleteTargetById")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<string>> DeleteTargetById(int TargetId)
+        {
+            try
+            {
+                var result = await _TargetService.DeleteTargetById(TargetId);
+                return Ok(result);
+            }
+            catch (EntityNotFoundException enf)
+            {
+                return NotFound(new ErrorModel(404, enf.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorModel(500, ex.Message));
+            }
+        }
+
+        [Authorize(Roles = "User")]
         [HttpPut("UpdateTarget")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
