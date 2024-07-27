@@ -7,7 +7,7 @@
             Excellent,
             Fair, 
             Poor,
-            NoStatus
+            No_Status
         }
     }
 }

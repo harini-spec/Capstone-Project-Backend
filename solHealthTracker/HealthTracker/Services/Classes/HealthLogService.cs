@@ -111,7 +111,7 @@ namespace HealthTracker.Services.Classes
 
                 // There is no Ideal Height
                 if (Metric.MetricType == "Height")
-                    return HealthStatusEnum.HealthStatus.NoStatus;
+                    return HealthStatusEnum.HealthStatus.No_Status;
 
                 // For Weight, BMI is calculated
                 float BMI_Val = 0;
