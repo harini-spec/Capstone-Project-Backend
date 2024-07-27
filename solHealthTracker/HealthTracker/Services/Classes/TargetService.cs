@@ -157,6 +157,42 @@ namespace HealthTracker.Services.Classes
             catch { throw; }
         }
 
+        public async Task<string> DeleteTargetById(int TargetId)
+        {
+            try
+            {
+                Target target = await _TargetRepository.Delete(TargetId);
+                return "Successfully deleted!";
+            }
+            catch { throw; }
+        }
+
+        public async Task<TargetOutputDTO> GetTargetDTOById(int TargetId)
+        {
+            try
+            {
+                Target target = await GetTargetById(TargetId);
+                return MapTargetToTargetOutputDTO(target);
+            }
+            catch { throw; }
+        }
+
+        public async Task<List<TargetOutputDTO>> GetTargetsOfPreferenceId(int prefId)
+        {
+            try
+            {
+                var Targets = await _TargetRepository.GetAll();
+                var TargetsOfPrefId = Targets.Where(target => target.PreferenceId == prefId).OrderBy(target => target.TargetDate);
+                var result = new List<TargetOutputDTO>();
+                foreach(var Target in TargetsOfPrefId)
+                {
+                    result.Add(MapTargetToTargetOutputDTO(Target));
+                }
+                return result;
+            }
+            catch { throw; }
+        }
+
 
         #region Mappers
 
@@ -194,6 +230,7 @@ namespace HealthTracker.Services.Classes
             target.TargetStatus = Models.ENUMs.TargetStatusEnum.TargetStatus.Not_Achieved;
             return target;
         }
+
         #endregion
     }
 }

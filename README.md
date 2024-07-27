@@ -92,12 +92,25 @@ ENUM Gender         - Female, Male, Others
 - Check if target already set for the given date
 - O/P: Msg - status based on the ideal range 
 
-`GET/Target` 
+`GET/Today's Target` 
 - I/P: Metric type
 - Calculate preference ID 
 - Not achieved target in earliest future
 - Get target data for current date between start and end date 
 - O/P: Target DTO 
+
+`GET/Target By ID` 
+- I/P: Target ID
+- O/P: Target DTO 
+
+`DELETE/Target By ID` 
+- I/P: Target ID
+- O/P: Success message
+
+`GET/Get All Targets of Pref ID` 
+- I/P: Pref ID
+- Sort Targets based on Target Date
+- O/P: Target DTO List
 
 `PUT/Target`
 - I/P: Target updated data 
