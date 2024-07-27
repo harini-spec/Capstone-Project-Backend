@@ -164,10 +164,14 @@ namespace HealthTracker.Services.Classes
 
         private async Task<GetHealthLogOutputDTO> MapHealthLogToGetHealthLogOutputDTO(HealthLog healthlog, int UserId)
         {
+            var MetricId = await _MetricService.GetMetricIdFromPreferenceId(healthlog.PreferenceId);
+            var Metric = await _MetricService.GetMetricById(MetricId);
+
             GetHealthLogOutputDTO getHealthLogOutputDTO = new GetHealthLogOutputDTO();
             getHealthLogOutputDTO.Id = healthlog.Id;
             getHealthLogOutputDTO.PreferenceId = healthlog.PreferenceId;
             getHealthLogOutputDTO.value = healthlog.value;
+            getHealthLogOutputDTO.Unit = Metric.MetricUnit;
             getHealthLogOutputDTO.HealthStatus = healthlog.HealthStatus.ToString();
 
             AddHealthLogInputDTO addHealthLogInputDTO = new AddHealthLogInputDTO();

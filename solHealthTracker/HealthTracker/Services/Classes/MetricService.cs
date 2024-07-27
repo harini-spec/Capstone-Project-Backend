@@ -186,6 +186,7 @@ namespace HealthTracker.Services.Classes
 
                         preferenceOutputDTO.PreferenceId = pref.Id;
                         preferenceOutputDTO.MetricType = metric.MetricType.ToString();
+                        preferenceOutputDTO.MetricUnit = metric.MetricUnit;
                         result.Add(preferenceOutputDTO);
                     }
                     return result;
@@ -201,6 +202,7 @@ namespace HealthTracker.Services.Classes
 
                         preferenceOutputDTO.PreferenceId = pref.Id;
                         preferenceOutputDTO.MetricType = metric.MetricType.ToString();
+                        preferenceOutputDTO.MetricUnit = metric.MetricUnit;
                         result.Add(preferenceOutputDTO);
                     }
                     return result;

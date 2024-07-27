@@ -8,6 +8,7 @@ namespace HealthTracker.Models.DTOs.HealthLog
         public int Id { get; set; }
         public int PreferenceId { get; set; }
         public float value { get; set; }
+        public string Unit { get; set; }
         public string HealthStatus { get; set; }
         public string? TargetStatus { get; set; }
         public DateTime Created_at { get; set; }
