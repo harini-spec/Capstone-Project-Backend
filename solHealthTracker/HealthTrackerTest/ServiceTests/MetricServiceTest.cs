@@ -100,6 +100,30 @@ namespace HealthTrackerTest.ServiceTests
         }
 
         [Test]
+        public async Task GetPrefDTOByPrefIdSuccessTest()
+        {
+            // Arrange
+            List<string> prefs = new List<string>
+            {
+                "Height"
+            };
+            await MetricService.AddPreference(prefs, 1, "User");
+
+            //Action
+            var result = await MetricService.GetPreferenceDTOByPrefId(1);
+
+            // Assert
+            Assert.That(result.MetricType, Is.EqualTo("Height"));
+        }
+
+        [Test]
+        public async Task GetPrefDTOByPrefIdFailTest()
+        { 
+            //Action
+            var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await MetricService.GetPreferenceDTOByPrefId(100));
+        }
+
+        [Test]
         public async Task AddUserPreferenceSuccessTest()
         {
             // Arrange

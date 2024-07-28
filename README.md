@@ -46,6 +46,10 @@ ENUM Gender         - Female, Male, Others
 - I/P: - 
 - O/P: List of metrics
 
+`GET/Get Metric Type and Unit from Pref Id` 
+- I/P: Pref Id
+- O/P: Pref DTO
+
 ### User:
 `POST/User Preferences` 
 - I/P: Metric list

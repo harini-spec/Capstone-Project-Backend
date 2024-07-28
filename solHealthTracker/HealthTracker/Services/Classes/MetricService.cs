@@ -23,6 +23,23 @@ namespace HealthTracker.Services.Classes
             _UserService = UserService;
         }
 
+        public async Task<PreferenceOutputDTO> GetPreferenceDTOByPrefId(int PrefId)
+        {
+            try
+            {
+                var MetricId = await GetMetricIdFromPreferenceId(PrefId);
+                var Metric = await GetMetricById(MetricId);
+
+                PreferenceOutputDTO preferenceOutputDTO = new PreferenceOutputDTO();
+                preferenceOutputDTO.PreferenceId = PrefId;
+                preferenceOutputDTO.MetricType = Metric.MetricType;
+                preferenceOutputDTO.MetricUnit = Metric.MetricUnit;
+                return preferenceOutputDTO;
+            }
+            catch { throw; }
+        }
+
+
         public async Task<string> AddPreference(List<string> Preferences, int UserId, string Role)
         {
             try

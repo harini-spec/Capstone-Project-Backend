@@ -128,5 +128,27 @@ namespace HealthTracker.Controllers
                 return BadRequest(new ErrorModel(500, ex.Message));
             }
         }
+
+        [Authorize(Roles = "User, Coach")]
+        [HttpGet("GetPreferenceDTOByPrefId")]
+        [ProducesResponseType(typeof(PreferenceOutputDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<PreferenceOutputDTO>> GetPreferenceDTOByPrefId(int PrefId)
+        {
+            try
+            {
+                var result = await _MetricService.GetPreferenceDTOByPrefId(PrefId);
+                return Ok(result);
+            }
+            catch (EntityNotFoundException enf)
+            {
+                return NotFound(new ErrorModel(404, enf.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorModel(500, ex.Message));
+            }
+        }
     }
 }

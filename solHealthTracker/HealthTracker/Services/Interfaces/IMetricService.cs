@@ -15,5 +15,7 @@ namespace HealthTracker.Services.Interfaces
         public Task<Metric> GetMetricById(int MetricId);
         public Task<int> GetMetricIdFromPreferenceId(int PrefId);
         public Task<int> FindPreferenceIdFromMetricTypeAndUserId(string MetricType, int UserId);
+
+        public Task<PreferenceOutputDTO> GetPreferenceDTOByPrefId(int PrefId);
     }
 }
