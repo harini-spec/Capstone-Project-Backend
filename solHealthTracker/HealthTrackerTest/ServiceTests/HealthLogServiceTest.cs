@@ -146,6 +146,79 @@ namespace HealthTrackerTest.ServiceTests
         }
 
         [Test]
+        public async Task AddHeightHealthLogSuccessTest()
+        {
+            // Arrange
+            AddHealthLogInputDTO addHealthLogInputDTO1 = new AddHealthLogInputDTO()
+            {
+                PreferenceId = 3,
+                value = float.Parse("1.5")
+            };
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1);
+            var log = await HealthLogRepository.GetById(1);
+            log.Created_at = DateTime.Now.AddDays(-1);
+            await HealthLogRepository.Update(log);
+            AddHealthLogInputDTO addHealthLogInputDTO2 = new AddHealthLogInputDTO()
+            {
+                PreferenceId = 3,
+                value = float.Parse("1.6")
+            };
+
+            // Action
+            var result = await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1);
+
+            // Assert
+            Assert.That(result.HealthStatus, Is.EqualTo("No_Status"));
+        }
+
+        [Test]
+        public async Task AddHeightHealthLogExceptionTest()
+        {
+            // Arrange
+            AddHealthLogInputDTO addHealthLogInputDTO1 = new AddHealthLogInputDTO()
+            {
+                PreferenceId = 3,
+                value = float.Parse("1.5")
+            };
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1);
+            var log = await HealthLogRepository.GetById(1);
+            log.Created_at = DateTime.Now.AddDays(-1);
+            await HealthLogRepository.Update(log);
+            AddHealthLogInputDTO addHealthLogInputDTO2 = new AddHealthLogInputDTO()
+            {
+                PreferenceId = 3,
+                value = float.Parse("1.3")
+            };
+
+            // Action
+            var exception = Assert.ThrowsAsync<InvalidDataException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1));
+        }
+
+        [Test]
+        public async Task UpdateHeightHealthLogExceptionTest()
+        {
+            // Arrange
+            AddHealthLogInputDTO addHealthLogInputDTO1 = new AddHealthLogInputDTO()
+            {
+                PreferenceId = 3,
+                value = float.Parse("1.5")
+            };
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1);
+            var log = await HealthLogRepository.GetById(1);
+            log.Created_at = DateTime.Now.AddDays(-1);
+            await HealthLogRepository.Update(log);
+            AddHealthLogInputDTO addHealthLogInputDTO2 = new AddHealthLogInputDTO()
+            {
+                PreferenceId = 3,
+                value = float.Parse("1.6")
+            };
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1);
+
+            // Action
+            var exception = Assert.ThrowsAsync<InvalidDataException>(async () => await HealthLogService.UpdateHealthLog(2, float.Parse("1.3"), 1));
+        }
+
+        [Test]
         public async Task AddHealthLogSuccessTest()
         {
             // Arrange

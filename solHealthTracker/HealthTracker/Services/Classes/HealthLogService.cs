@@ -25,6 +25,30 @@ namespace HealthTracker.Services.Classes
             _TargetService = targetService;
         }
 
+        public async Task<bool> IsDataCorrect(int prefId, float value)
+        {
+            try
+            {
+                int MetricId = await _MetricService.GetMetricIdFromPreferenceId(prefId);
+                var Metric = await _MetricService.GetMetricById(MetricId);
+
+                if(Metric.MetricType == "Height")
+                {
+                    var healthlogs = await _HealthLogRepository.GetAll();
+                    var filteredHealthLogs = healthlogs
+                        .Where(log => log.PreferenceId == prefId)
+                        .OrderBy(log => log.value).ToList();
+                    if (value < filteredHealthLogs[filteredHealthLogs.Count - 1].value)
+                        return false;
+                    else
+                        return true;
+                }
+                return true;
+            }
+            catch (NoItemsFoundException) { return true; }
+            catch { throw; } 
+        }
+
         public async Task<AddHealthLogOutputDTO> AddHealthLog(AddHealthLogInputDTO healthLogInputDTO, int UserId)
         {
             try
@@ -39,6 +63,15 @@ namespace HealthTracker.Services.Classes
             }
             catch (NoItemsFoundException)
             {
+                try
+                {
+                    if (!await IsDataCorrect(healthLogInputDTO.PreferenceId, healthLogInputDTO.value))
+                    {
+                        throw new InvalidDataException("Height value is wrong!");
+                    }
+                }
+                catch { throw; }
+
                 HealthLog healthLog = new HealthLog();
                 healthLog.PreferenceId = healthLogInputDTO.PreferenceId;
                 healthLog.value = healthLogInputDTO.value;
@@ -82,6 +115,11 @@ namespace HealthTracker.Services.Classes
                 log = await _HealthLogRepository.GetById(HealthLogId);
                 log.value = value;
                 log.Updated_at = DateTime.Now;
+
+                if (!await IsDataCorrect(log.PreferenceId, value))
+                {
+                    throw new InvalidDataException("Height value is wrong!");
+                }
 
                 AddHealthLogInputDTO healthLogInput = new AddHealthLogInputDTO();
                 healthLogInput.PreferenceId = log.PreferenceId;

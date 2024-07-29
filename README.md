@@ -78,6 +78,8 @@ ENUM Gender         - Female, Male, Others
     - update target status 
     - Add target status to Output DTO
 
+- If height, check if its reducing - error
+
 - Add to health log 
 - O/P: output DTO: Ideal status, target status 
 

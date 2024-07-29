@@ -26,6 +26,7 @@ namespace HealthTracker.Controllers
         [HttpPost("AddHealthLog")]
         [ProducesResponseType(typeof(AddHealthLogOutputDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
@@ -44,6 +45,10 @@ namespace HealthTracker.Controllers
                     }
                     var result = await _HealthLogService.AddHealthLog(healthLogInputDTO, UserId);
                     return Ok(result);
+                }
+                catch (InvalidDataException ide)
+                {
+                    return BadRequest(new ErrorModel(400, ide.Message));
                 }
                 catch (NoItemsFoundException nif)
                 {
@@ -101,6 +106,7 @@ namespace HealthTracker.Controllers
         [HttpPut("UpdateHealthLog")]
         [ProducesResponseType(typeof(AddHealthLogOutputDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
 
@@ -118,6 +124,10 @@ namespace HealthTracker.Controllers
                     }
                     var result = await _HealthLogService.UpdateHealthLog(logId, value, UserId);
                     return Ok(result);
+                }
+                catch (InvalidDataException ide)
+                {
+                    return BadRequest(new ErrorModel(400, ide.Message));
                 }
                 catch (NoItemsFoundException nif)
                 {
