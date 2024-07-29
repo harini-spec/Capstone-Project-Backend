@@ -56,6 +56,10 @@ namespace HealthTracker.Services.Classes
 
                 if (Role == "User")
                 {
+                    if(!Preferences.Contains("Height"))
+                        Preferences.Add("Height");
+                    if(!Preferences.Contains("Weight"))
+                        Preferences.Add("Weight");
                     foreach (var preference in Preferences)
                     {
                         var prefs = new List<UserPreference>();
@@ -145,6 +149,8 @@ namespace HealthTracker.Services.Classes
                 List<string> result = new List<string>();
                 foreach (var metric in metrics)
                 {
+                    if (metric.MetricType == "Height" || metric.MetricType == "Weight")
+                        continue;
                     result.Add(metric.MetricType);
                 }
                 return result;

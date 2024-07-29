@@ -43,7 +43,7 @@ namespace HealthTracker.Controllers
                     var result = await _TargetService.AddTarget(targetInputDTO);
                     return Ok(result);
                 }
-                catch (InvalidOperationException ioe)
+                catch (InvalidActionException ioe)
                 {
                     return UnprocessableEntity(new ErrorModel(422, ioe.Message));
                 }
@@ -187,7 +187,7 @@ namespace HealthTracker.Controllers
                     var result = await _TargetService.UpdateTarget(targetInputDTO);
                     return Ok(result);
                 }
-                catch (InvalidOperationException ioe)
+                catch (InvalidActionException ioe)
                 {
                     return UnprocessableEntity(new ErrorModel(422, ioe.Message));
                 }

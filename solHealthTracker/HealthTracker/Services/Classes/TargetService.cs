@@ -34,7 +34,11 @@ namespace HealthTracker.Services.Classes
                 var found = false;
                 foreach (var target in targets)
                 {
-                    if (target.TargetDate.Date == targetInputDTO.TargetDate.Date && TargetId != target.Id)
+                    if(TargetId == target.Id)
+                    {
+                        continue;
+                    }
+                    else if (target.TargetDate.Date == targetInputDTO.TargetDate.Date)
                     {
                         UserPreference pref = await _MetricService.FindUserPreferenceByPreferenceId(target.PreferenceId);
                         Metric metric = await _MetricService.GetMetricById(pref.MetricId);

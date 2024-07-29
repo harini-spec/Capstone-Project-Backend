@@ -53,6 +53,15 @@ namespace HealthTrackerTest.ServiceTests
                 Updated_at = DateTime.UtcNow
             };
             await MetricRepository.Add(metric1);
+            Metric metric3 = new Metric()
+            {
+                Id = 3,
+                MetricType = "Weight",
+                MetricUnit = "Kg",
+                Created_at = DateTime.UtcNow,
+                Updated_at = DateTime.UtcNow
+            };
+            await MetricRepository.Add(metric3);
             Metric metric2 = new Metric()
             {
                 Id = 2,
@@ -216,7 +225,7 @@ namespace HealthTrackerTest.ServiceTests
         public async Task FindMetricByMetricTypeFailTest()
         {
             // Action
-            var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await MetricService.FindMetricByMetricType("Weight"));
+            var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await MetricService.FindMetricByMetricType("BMI"));
         }
 
         [Test]
@@ -225,9 +234,10 @@ namespace HealthTrackerTest.ServiceTests
             // Arrange
             await MetricRepository.Delete(1);
             await MetricRepository.Delete(2);
+            await MetricRepository.Delete(3);
 
             // Action
-            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await MetricService.FindMetricByMetricType("Weight"));
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await MetricService.FindMetricByMetricType("BMI"));
         }
 
         [Test]
@@ -244,7 +254,7 @@ namespace HealthTrackerTest.ServiceTests
             var result = await MetricService.GetPreferencesListOfUser(1, "User");
 
             // Assert
-            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(result.Count, Is.EqualTo(2));
         }
 
         [Test]
@@ -358,7 +368,7 @@ namespace HealthTrackerTest.ServiceTests
 
             var result = await MetricService.GetAllMetrics();
 
-            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result.Count, Is.EqualTo(1));
         }
 
         [Test]
@@ -366,6 +376,7 @@ namespace HealthTrackerTest.ServiceTests
         {
             await MetricRepository.Delete(1);
             await MetricRepository.Delete(2);
+            await MetricRepository.Delete(3);
 
             var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await MetricService.GetAllMetrics());
         }
@@ -412,7 +423,7 @@ namespace HealthTrackerTest.ServiceTests
                 "Height"
             };
             await MetricService.AddPreference(prefs, 1, "User");
-            var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await MetricService.FindPreferenceIdFromMetricTypeAndUserId("Weight", 1));
+            var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await MetricService.FindPreferenceIdFromMetricTypeAndUserId("BMI", 1));
         }
 
         [Test]

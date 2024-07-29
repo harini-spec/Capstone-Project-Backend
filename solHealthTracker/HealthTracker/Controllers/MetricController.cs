@@ -12,6 +12,7 @@ using System.Diagnostics;
 using HealthTracker.Models.DTOs.MetricPreference;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
+using HealthTracker.Models.DBModels;
 
 namespace HealthTracker.Controllers
 {
@@ -27,6 +28,7 @@ namespace HealthTracker.Controllers
             _MetricService = metricService;
         }
 
+        [Authorize(Roles = "User, Coach")]
         [HttpGet("GetAllMetrics")]
         [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -36,7 +38,17 @@ namespace HealthTracker.Controllers
         {
                 try
                 {
+                    string Role = "";
+                    foreach (var claim in User.Claims)
+                    {
+                        if (claim.Type.Contains("role"))
+                            Role = claim.Value;
+                    }
                     var result = await _MetricService.GetAllMetrics();
+                if(Role == "Coach")
+                {
+                    result.Add("Weight");
+                }
                     return Ok(result);
                 }
                 catch (NoItemsFoundException nif)

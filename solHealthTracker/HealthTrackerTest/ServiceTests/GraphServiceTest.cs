@@ -21,6 +21,7 @@ namespace HealthTrackerTest.ServiceTests
         IRepository<int, HealthLog> HealthLogRepository;
         IRepository<int, UserPreference> UserPreference;
         IRepository<int, Metric> MetricRepository;
+        IRepository<int, IdealData> IdealDataRepository;
 
         IMetricService MetricService;
         IGraphService GraphService;
@@ -36,9 +37,10 @@ namespace HealthTrackerTest.ServiceTests
             HealthLogRepository = new HealthLogRepository(context);
             UserPreference = new UserPreferenceRepository(context);
             MetricRepository = new MetricRepository(context);
+            IdealDataRepository = new IdealDataRepository(context);
 
             MetricService = new MetricService(UserPreference, null, MetricRepository, null);
-            GraphService = new GraphService(HealthLogRepository, MetricService);
+            GraphService = new GraphService(HealthLogRepository, MetricService, IdealDataRepository);
 
             Metric metric1 = new Metric()
             {
@@ -49,6 +51,36 @@ namespace HealthTrackerTest.ServiceTests
                 Updated_at = DateTime.UtcNow
             };
             await MetricRepository.Add(metric1);
+            Metric metric2 = new Metric()
+            {
+                Id = 2,
+                MetricType = "Weight",
+                MetricUnit = "Kg",
+                Created_at = DateTime.UtcNow,
+                Updated_at = DateTime.UtcNow
+            };
+            await MetricRepository.Add(metric2);
+
+            IdealData idealData1 = new IdealData()
+            {
+                MetricId = 1,
+                HealthStatus = HealthStatusEnum.HealthStatus.Excellent,
+                MinVal = 7,
+                MaxVal = 10,
+                Created_at = DateTime.Now,
+                Updated_at = DateTime.Now
+            };
+            await IdealDataRepository.Add(idealData1);
+            IdealData idealData2 = new IdealData()
+            {
+                MetricId = 1,
+                HealthStatus = HealthStatusEnum.HealthStatus.Fair,
+                MinVal = 8,
+                MaxVal = 9,
+                Created_at = DateTime.Now,
+                Updated_at = DateTime.Now
+            };
+            await IdealDataRepository.Add(idealData2);
 
             UserPreference userPreference1 = new UserPreference()
             {
@@ -161,6 +193,28 @@ namespace HealthTrackerTest.ServiceTests
 
             // Assert
             Assert.That(exception.Message, Is.EqualTo("No Log Records found!"));
+        }
+
+        [Test]
+        public async Task GetGraphDataRangeSuccessTest()
+        {
+            // Action
+            var result = await GraphService.GetGraphDataHealthyRange("Sleep_Hours", 1);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.MinValue, Is.EqualTo(7));
+                Assert.That(result.MaxValue, Is.EqualTo(10));
+            });
+        }
+
+        [Test]
+        public async Task GetGraphDataRangeNoMetricsFoundExceptionTest()
+        {
+
+            // Action
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await GraphService.GetGraphDataHealthyRange("Weight", 1));
         }
     }
 }

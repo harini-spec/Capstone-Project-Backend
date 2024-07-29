@@ -10,12 +10,14 @@ namespace HealthTracker.Services.Classes
     public class GraphService : IGraphService
     {
         private readonly IRepository<int, HealthLog> _HealthLogRepository;
+        private readonly IRepository<int, IdealData> _IdealDataRepository;
         private readonly IMetricService _MetricService;
 
-        public GraphService(IRepository<int, HealthLog> healthLogRepository, IMetricService metricService)
+        public GraphService(IRepository<int, HealthLog> healthLogRepository, IMetricService metricService, IRepository<int, IdealData> idealDataRepository)
         {
             _HealthLogRepository = healthLogRepository;
             _MetricService = metricService;
+            _IdealDataRepository = idealDataRepository;
         }
 
         public DateTime GetFirstDayOfCurrentWeekStartingSunday()
@@ -79,6 +81,47 @@ namespace HealthTracker.Services.Classes
                 return MapHealthLogsToGraphDataOutputDTOs(ResultLogs, UserId);
             }
             catch { throw; }
+        }
+
+        public async Task<GraphDataRangeOutputDTO> GetGraphDataHealthyRange(string MetricType, int UserId)
+        {
+            try
+            {
+                var Metric = await _MetricService.FindMetricByMetricType(MetricType);
+                var IdealData = await _IdealDataRepository.GetAll();
+                var MetricIdealData = IdealData
+                    .Where(idealData => idealData.MetricId == Metric.Id &&
+                                        (idealData.HealthStatus == Models.ENUMs.HealthStatusEnum.HealthStatus.Excellent ||
+                                         idealData.HealthStatus == Models.ENUMs.HealthStatusEnum.HealthStatus.Fair))
+                    .ToList();
+
+                if (MetricIdealData.Count == 0)
+                    throw new NoItemsFoundException("No Ideal Data values found!");
+
+                GraphDataRangeOutputDTO graphDataOutputDTO = new GraphDataRangeOutputDTO
+                {
+                    MetricType = MetricType,
+                    MetricUnit = Metric.MetricUnit
+                };
+
+                var val_range = new List<float>();
+                foreach (var data in MetricIdealData)
+                {
+                    val_range.Add(data.MinVal);
+                    val_range.Add(data.MaxVal);
+                }
+
+                val_range = val_range.OrderBy(a => a).ToList();
+                graphDataOutputDTO.MinValue = val_range.First();
+                graphDataOutputDTO.MaxValue = val_range.Last();
+
+                return graphDataOutputDTO;
+            }
+            catch
+            {
+                throw;
+            }
+
         }
 
 
