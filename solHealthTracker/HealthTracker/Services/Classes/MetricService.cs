@@ -4,6 +4,7 @@ using HealthTracker.Models.DTOs.MetricPreference;
 using HealthTracker.Repositories.Classes;
 using HealthTracker.Repositories.Interfaces;
 using HealthTracker.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace HealthTracker.Services.Classes
@@ -44,62 +45,69 @@ namespace HealthTracker.Services.Classes
         {
             try
             {
-                User user = new User();
+                User user = await _UserService.GetUserById(UserId);
+
+                List<string> ExistingPrefs = new List<string>();
                 try
                 {
-                    user = await _UserService.GetUserById(UserId);
+                    var UserPrefs = await GetPreferencesListOfUser(UserId, Role);
+                    foreach (var pref in UserPrefs)
+                    {
+                        ExistingPrefs.Add(pref.MetricType);
+                    }
                 }
-                catch
-                {
-                    throw new UnauthorizedUserException("You are not logged in!");
-                }
+                catch { }
 
+
+                bool found = false;
                 if (Role == "User")
                 {
                     if(!Preferences.Contains("Height"))
                         Preferences.Add("Height");
                     if(!Preferences.Contains("Weight"))
                         Preferences.Add("Weight");
-                    foreach (var preference in Preferences)
-                    {
-                        var prefs = new List<UserPreference>();
-                        try
-                        {
-                            prefs = await _UserPreferenceRepository.GetAll();
-                        }
-                        catch { }
-                        var Metric = await FindMetricByMetricType(preference);
-                        if (prefs.Where(pref => pref.UserId == UserId && pref.MetricId == Metric.Id).ToList().Count != 0)
-                            throw new EntityAlreadyExistsException("User Preference already exists. Choose again!");
 
-                        UserPreference userPref = await MapUserPreferenceStringToUserPreference(preference, UserId);
-                        await _UserPreferenceRepository.Add(userPref);
+                    foreach(var pref in Preferences)
+                    {
+                        if (pref == "Height" && ExistingPrefs.Contains(pref))
+                            continue;
+                        else if(pref == "Weight" && ExistingPrefs.Contains(pref))
+                            continue;
+
+                        if (ExistingPrefs.Contains(pref))
+                        {
+                            found = true;
+                        } 
+                        else
+                        {
+                            UserPreference userPref = await MapUserPreferenceStringToUserPreference(pref, UserId);
+                            await _UserPreferenceRepository.Add(userPref);
+                            user.is_preferenceSet = true;
+                            await _UserService.UpdateUser(user);
+                        }
                     }
-                    user.is_preferenceSet = true;
-                    await _UserService.UpdateUser(user);
-                    return "Successfully added";
                 }
                 else
                 {
-                    foreach (var preference in Preferences)
+                    foreach (var pref in Preferences)
                     {
-                        var prefs = new List<MonitorPreference>();
-                        try
+                        if (ExistingPrefs.Contains(pref))
                         {
-                            prefs = await _MonitorPreferenceRepository.GetAll();
+                            found = true;
                         }
-                        catch { }
-                        var Metric = await FindMetricByMetricType(preference);
-                        if (prefs.Where(pref => pref.CoachId == UserId && pref.MetricId == Metric.Id).ToList().Count != 0)
-                            throw new EntityAlreadyExistsException("Monitor Preference already exists. Choose again!");
-
-                        MonitorPreference monitorPref = await MapMonitorPreferenceStringToMonitorPreference(preference, UserId);
-                        await _MonitorPreferenceRepository.Add(monitorPref);
+                        else
+                        {
+                            MonitorPreference monitorPref = await MapMonitorPreferenceStringToMonitorPreference(pref, UserId);
+                            await _MonitorPreferenceRepository.Add(monitorPref);
+                            user.is_preferenceSet = true;
+                            await _UserService.UpdateUser(user);
+                        }
                     }
-                    user.is_preferenceSet = true;
-                    await _UserService.UpdateUser(user);
-                    return "Successfully added";
                 }
+                if (found)
+                    throw new EntityAlreadyExistsException("Some monitor Preferences already exist. Choose again!");
+                else
+                    return "Successfully added";
             }
             catch (Exception)
             {
@@ -141,15 +149,27 @@ namespace HealthTracker.Services.Classes
             catch { throw; }
         }
 
-        public async Task<List<string>> GetAllMetrics()
+        public async Task<List<string>> GetAllNotSelectedPrefs(int UserId, string Role)
         {
             try
             {
                 var metrics = await _MetricRepository.GetAll();
                 List<string> result = new List<string>();
+                List<string> ExistingPrefs = new List<string>();
+
+                try
+                {
+                    var UserPrefs = await GetPreferencesListOfUser(UserId, Role);
+                    foreach (var pref in UserPrefs)
+                    {
+                        ExistingPrefs.Add(pref.MetricType);
+                    }
+                }
+                catch { }
+
                 foreach (var metric in metrics)
                 {
-                    if (metric.MetricType == "Height" || metric.MetricType == "Weight")
+                    if (metric.MetricType == "Height" || metric.MetricType == "Weight" || ExistingPrefs.Contains(metric.MetricType))
                         continue;
                     result.Add(metric.MetricType);
                 }

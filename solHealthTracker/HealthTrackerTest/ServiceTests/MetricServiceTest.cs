@@ -174,7 +174,7 @@ namespace HealthTrackerTest.ServiceTests
             };
 
             // Action
-            var exception = Assert.ThrowsAsync<UnauthorizedUserException>(async () => await MetricService.AddPreference(prefs, 100, "Coach"));
+            var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await MetricService.AddPreference(prefs, 100, "Coach"));
         }
 
         [Test]
@@ -183,15 +183,17 @@ namespace HealthTrackerTest.ServiceTests
             // Arrange
             List<string> prefs = new List<string>
             {
-                "Height"
+                "Sleep_Hours"
             };
             await MetricService.AddPreference(prefs, 1, "User");
 
-            // Action
-            var exception = Assert.ThrowsAsync<EntityAlreadyExistsException>(async () => await MetricService.AddPreference(prefs, 1, "User"));
+            List<string> Newprefs = new List<string>
+            {
+                "Sleep_Hours"
+            };
 
-            // Assert
-            Assert.That(exception.Message, Is.EqualTo("User Preference already exists. Choose again!"));
+            // Action
+            var exception = Assert.ThrowsAsync<EntityAlreadyExistsException>(async () => await MetricService.AddPreference(Newprefs, 1, "User"));
         }
 
         [Test]
@@ -208,7 +210,7 @@ namespace HealthTrackerTest.ServiceTests
             var exception = Assert.ThrowsAsync<EntityAlreadyExistsException>(async () => await MetricService.AddPreference(prefs, 2, "Coach"));
 
             // Assert
-            Assert.That(exception.Message, Is.EqualTo("Monitor Preference already exists. Choose again!"));
+            Assert.That(exception.Message, Is.EqualTo("Some monitor Preferences already exist. Choose again!"));
         }
 
         [Test]
@@ -365,8 +367,21 @@ namespace HealthTrackerTest.ServiceTests
         [Test]
         public async Task GetAllMetricsSuccessTest()
         {
+            List<string> prefs = new List<string>
+            {
+                "Sleep_Hours"
+            };
+            await MetricService.AddPreference(prefs, 1, "User");
 
-            var result = await MetricService.GetAllMetrics();
+            var result = await MetricService.GetAllNotSelectedPrefs(1, "User");
+
+            Assert.That(result.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public async Task GetAllMetricsNoPrefSuccessTest()
+        {
+            var result = await MetricService.GetAllNotSelectedPrefs(1, "User");
 
             Assert.That(result.Count, Is.EqualTo(1));
         }
@@ -378,7 +393,7 @@ namespace HealthTrackerTest.ServiceTests
             await MetricRepository.Delete(2);
             await MetricRepository.Delete(3);
 
-            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await MetricService.GetAllMetrics());
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await MetricService.GetAllNotSelectedPrefs(1, "User"));
         }
 
         [Test]

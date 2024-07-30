@@ -38,16 +38,19 @@ namespace HealthTracker.Controllers
         {
                 try
                 {
+                    int UserId = -1;
                     string Role = "";
                     foreach (var claim in User.Claims)
                     {
+                        if (claim.Type == "ID")
+                            UserId = Convert.ToInt32(claim.Value);
                         if (claim.Type.Contains("role"))
                             Role = claim.Value;
                     }
-                    var result = await _MetricService.GetAllMetrics();
+                    var result = await _MetricService.GetAllNotSelectedPrefs(UserId, Role);
                 if(Role == "Coach")
                 {
-                    result.Add("Weight");
+                    result.Add("Weight"); // No Height as it won't go to poor state
                 }
                     return Ok(result);
                 }
@@ -133,7 +136,7 @@ namespace HealthTracker.Controllers
             }
             catch(EntityAlreadyExistsException eae)
             {
-                return Conflict(new ErrorModel(404, eae.Message));
+                return Conflict(new ErrorModel(409, eae.Message));
             }
             catch (Exception ex)
             {

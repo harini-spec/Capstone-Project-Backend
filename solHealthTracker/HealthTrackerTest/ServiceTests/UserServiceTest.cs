@@ -220,34 +220,6 @@ namespace HealthTrackerTest.ServiceTests
         }
 
         [Test]
-        public async Task LoginCoachNotActiveExceptionTest()
-        {
-            // Arrange
-            RegisterInputDTO Coach = new RegisterInputDTO()
-            {
-                Name = "Sam",
-                Age = 30,
-                Gender = GenderEnum.Gender.Male.ToString(),
-                Email = "samu@gmail.com",
-                Phone = "8877887788",
-                Password = "samaroot",
-                Role = "Coach"
-            };
-            await userService.RegisterUser(Coach);
-            LoginInputDTO coachLogin = new LoginInputDTO()
-            {
-                Email = "samu@gmail.com",
-                Password = "samaroot"
-            };
-
-            // Action
-            var exception = Assert.ThrowsAsync<UserNotActiveException>(async () => await userService.LoginUser(coachLogin));
-
-            // Assert
-            Assert.That(exception.Message, Is.EqualTo("Your account is not activated yet"));
-        }
-
-        [Test]
         public async Task UpdateUserSuccessTest()
         {
             RegisterInputDTO Coach = new RegisterInputDTO()

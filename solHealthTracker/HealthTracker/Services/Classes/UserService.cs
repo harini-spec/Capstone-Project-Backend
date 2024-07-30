@@ -100,7 +100,6 @@ namespace HealthTracker.Services.Classes
 
         #region Register User
 
-        // Register User : Status = Active, Register Coach : Status = Inactive 
         public async Task<string> RegisterUser(RegisterInputDTO registerInputDTO)
         {
             // Checking for duplicate value - Email ID 
@@ -189,6 +188,7 @@ namespace HealthTracker.Services.Classes
             loginOutputDTO.UserName = user.Name;
             loginOutputDTO.Role = user.Role.ToString();
             loginOutputDTO.Token = _tokenService.GenerateToken(user);
+            loginOutputDTO.IsPreferenceSet = user.is_preferenceSet;
 
             return loginOutputDTO;
         }
@@ -201,10 +201,12 @@ namespace HealthTracker.Services.Classes
             userDetail.PasswordHashKey = hMACSHA.Key;
             userDetail.PasswordEncrypted = hMACSHA.ComputeHash(Encoding.UTF8.GetBytes(registerInputDTO.Password));
 
-            if (registerInputDTO.Role.ToString() == "User")
-                userDetail.Status = UserStatusEnum.UserStatus.Active;
-            else if (registerInputDTO.Role.ToString() == "Coach")
-                userDetail.Status = UserStatusEnum.UserStatus.Inactive;
+            userDetail.Status = UserStatusEnum.UserStatus.Active;
+
+            //if (registerInputDTO.Role.ToString() == "User")
+            //    userDetail.Status = UserStatusEnum.UserStatus.Active;
+            //else if (registerInputDTO.Role.ToString() == "Coach")
+            //    userDetail.Status = UserStatusEnum.UserStatus.Inactive;
 
             userDetail.Created_at = DateTime.Now;
             userDetail.Updated_at = DateTime.Now;
