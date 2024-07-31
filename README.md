@@ -145,6 +145,8 @@ ENUM Gender         - Female, Male, Others
 
 `GET/Coach monitor preferences`
 
+`GET/GetProblemsOfUserId`
+
 `GET/Problems`
 - I/P: -
 - Get health logs 
