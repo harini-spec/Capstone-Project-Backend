@@ -69,16 +69,13 @@ namespace HealthTracker.Controllers
         [ProducesResponseType(typeof(List<PreferenceOutputDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<PreferenceOutputDTO>>> GetPreferencesListOfUser()
+        public async Task<ActionResult<List<PreferenceOutputDTO>>> GetPreferencesListOfUser(int UserId)
         {
             try
             {
-                int UserId = -1;
                 string Role = "";
                 foreach (var claim in User.Claims)
                 {
-                    if (claim.Type == "ID")
-                        UserId = Convert.ToInt32(claim.Value);
                     if (claim.Type.Contains("role"))
                         Role = claim.Value;
                 }

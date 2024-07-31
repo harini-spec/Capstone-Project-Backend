@@ -58,8 +58,7 @@ ENUM Gender         - Female, Male, Others
 - O/P: Msg - successfully added 
 
 `GET/User Preference`
-- I/P: -
-- Get user ID from token 
+- I/P: UserID
 - O/P: List of user preferences
 
 `POST/Health log` [No Health status for height (NoStatus will be health status), for weight -> BMI]

@@ -166,6 +166,64 @@ namespace HealthTrackerTest.ServiceTests
         }
 
         [Test]
+        public async Task GetUserIdsWithProblemsSuccessTestWithPreExistingSuggestionForUser()
+        {
+            // Arrange
+            HealthLog healthLog = new HealthLog()
+            {
+                HealthStatus = HealthStatusEnum.HealthStatus.Poor,
+                PreferenceId = 1,
+                value = 8,
+                Created_at = DateTime.Now,
+                Updated_at = DateTime.Now
+            };
+            await HealthLogRepository.Add(healthLog);
+            SuggestionInputDTO suggestionInputDTO = new SuggestionInputDTO()
+            {
+                UserId = 1,
+                Suggestion = "Sleep Early"
+            };
+            await ProblemService.AddSuggestion(suggestionInputDTO, 2);
+
+            // Action
+            var result = await ProblemService.GetUserIdsWithProblems(2);
+
+            // Assert
+            Assert.That(result.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public async Task GetUserIdsWithProblemsSuccessTestWithPreExistingSuggestionForDiffDate()
+        {
+            // Arrange
+            HealthLog healthLog = new HealthLog()
+            {
+                HealthStatus = HealthStatusEnum.HealthStatus.Poor,
+                PreferenceId = 1,
+                value = 8,
+                Created_at = DateTime.Now,
+                Updated_at = DateTime.Now
+            };
+            await HealthLogRepository.Add(healthLog);
+            SuggestionInputDTO suggestionInputDTO = new SuggestionInputDTO()
+            {
+                UserId = 1,
+                Suggestion = "Sleep Early"
+            };
+            await ProblemService.AddSuggestion(suggestionInputDTO, 2);
+            var suggestion = await SuggestionRepository.GetById(1);
+            suggestion.Created_at = DateTime.Now.AddDays(-1);
+            suggestion.Updated_at = DateTime.Now.AddDays(-1);
+            await SuggestionRepository.Update(suggestion);
+
+            // Action
+            var result = await ProblemService.GetUserIdsWithProblems(2);
+
+            // Assert
+            Assert.That(result.Count, Is.EqualTo(1));
+        }
+
+        [Test]
         public async Task GetUserIdsWithProblemsNoLogsForTodayExceptionTest()
         {
             // Arrange 

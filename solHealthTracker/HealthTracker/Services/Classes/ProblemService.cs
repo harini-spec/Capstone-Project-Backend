@@ -54,6 +54,13 @@ namespace HealthTracker.Services.Classes
                 }
                 catch { throw new NoItemsFoundException("No Monitor Preferences found!"); }
 
+                var Suggestions = new List<Suggestion>();
+                try
+                {
+                    Suggestions = await _SuggestionRepository.GetAll();
+                }
+                catch { }
+
                 var CoachMonitorPrefs = AllMonitorPrefs.Where(pref => pref.CoachId == CoachId).ToList();
                 if (CoachMonitorPrefs.Count == 0)
                     throw new NoItemsFoundException("Coach Preferences not set!");
@@ -76,7 +83,7 @@ namespace HealthTracker.Services.Classes
                 if(Result.Count == 0)
                     throw new NoItemsFoundException("No Problems Logs for today!");
 
-                return await MapHealthLogsToDictionary(Result);
+                return await MapHealthLogsToDictionary(Result, CoachId);
             }
             catch { throw; }
         }
@@ -117,19 +124,13 @@ namespace HealthTracker.Services.Classes
             List<SuggestionOutputDTO> suggestionOutputDTOs = new List<SuggestionOutputDTO>();
             foreach (var suggestion in userSuggestions)
             {
-                try
-                {
-                    suggestionOutputDTOs.Add(await MapSuggestionToSuggestionOutputDTO(suggestion));
-                }
-                catch { }
+                suggestionOutputDTOs.Add(await MapSuggestionToSuggestionOutputDTO(suggestion));
             }
             return suggestionOutputDTOs;
         }
 
         private async Task<SuggestionOutputDTO> MapSuggestionToSuggestionOutputDTO(Suggestion userSuggestion)
         {
-            try
-            {
                 SuggestionOutputDTO suggestionOutputDTO = new SuggestionOutputDTO();
                 suggestionOutputDTO.Id = userSuggestion.Id;
                 suggestionOutputDTO.UserId = userSuggestion.UserId;
@@ -141,13 +142,12 @@ namespace HealthTracker.Services.Classes
                 var Coach = await _UserService.GetUserById(userSuggestion.CoachId);
                 suggestionOutputDTO.CoachName = Coach.Name;
                 return suggestionOutputDTO;
-            }
-            catch
-            { throw; }
         }
 
-        private async Task<List<ProblemOutputDTO>> MapHealthLogsToDictionary(List<HealthLog> result)
+        private async Task<List<ProblemOutputDTO>> MapHealthLogsToDictionary(List<HealthLog> result, int CoachId)
         {
+            try
+            {
                 List<ProblemOutputDTO> problemOutputDTOs = new List<ProblemOutputDTO>();
                 Dictionary<int, List<string>> UserIdWithMetrics = new Dictionary<int, List<string>>();
 
@@ -165,16 +165,49 @@ namespace HealthTracker.Services.Classes
                         UserIdWithMetrics[user_pref.UserId].Add(Metric.MetricType);
                     }
                 }
-                return MapDictionaryToProblemOutputDTOs(UserIdWithMetrics);
+                return await MapDictionaryToProblemOutputDTOs(UserIdWithMetrics, CoachId);
+            }
+            catch { throw; }
         }
 
-        private List<ProblemOutputDTO> MapDictionaryToProblemOutputDTOs(Dictionary<int, List<string>> userIdWithMetrics)
+        private async Task<List<ProblemOutputDTO>> MapDictionaryToProblemOutputDTOs(Dictionary<int, List<string>> userIdWithMetrics, int CoachId)
         {
+            // User ID
+            var AllSuggestions = new List<Suggestion>();
+            try
+            {
+                AllSuggestions = await _SuggestionRepository.GetAll();
+            }
+            catch { }
+
+            if(AllSuggestions.Count != 0)
+            {
+                var CoachSuggestionsForToday = AllSuggestions.Where(suggestion => suggestion.CoachId == CoachId && suggestion.Created_at.Date == DateTime.Now.Date).ToList();
+                if(CoachSuggestionsForToday.Count != 0)
+                {
+                    foreach(var suggestion in CoachSuggestionsForToday)
+                    {
+                        if (userIdWithMetrics.ContainsKey(suggestion.UserId))
+                        {
+                            userIdWithMetrics.Remove(suggestion.UserId);
+                        }
+                    }
+                }
+            }
+
             List<ProblemOutputDTO> result = new List<ProblemOutputDTO>();
             foreach (var Item in userIdWithMetrics)
             {
                 ProblemOutputDTO problemOutputDTO = new ProblemOutputDTO();
-                problemOutputDTO.UserId = Item.Key;
+                try
+                {
+                    var User = await _UserService.GetUserById(Item.Key);
+                    problemOutputDTO.UserId = Item.Key;
+                    problemOutputDTO.UserName = User.Name;
+                    problemOutputDTO.Age = User.Age;
+                    problemOutputDTO.Gender = User.Gender.ToString();
+                }
+                catch { throw; }
                 problemOutputDTO.MetricsWithProblem = Item.Value;
                 result.Add(problemOutputDTO);
             }
