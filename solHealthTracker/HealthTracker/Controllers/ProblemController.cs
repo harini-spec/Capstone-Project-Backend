@@ -139,5 +139,31 @@ namespace HealthTracker.Controllers
                 return BadRequest(new ErrorModel(500, ex.Message));
             }
         }
+
+        [Authorize(Roles = "Coach")]
+        [HttpGet("GetProblemsOfUserId")]
+        [ProducesResponseType(typeof(ProblemOutputDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ProblemOutputDTO>> GetProblemsOfUserId(int UserId)
+        {
+            try
+            {
+                var result = await _ProblemService.GetProblemsOfUserId(UserId);
+                return Ok(result);
+            }
+            catch(EntityNotFoundException enf)
+            {
+                return NotFound(new ErrorModel(404, enf.Message));
+            }
+            catch (NoItemsFoundException nif)
+            {
+                return NotFound(new ErrorModel(404, nif.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorModel(500, ex.Message));
+            }
+        }
     }
 }

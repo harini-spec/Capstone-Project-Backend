@@ -8,5 +8,6 @@ namespace HealthTracker.Services.Interfaces
         public Task<string> AddSuggestion(SuggestionInputDTO suggestionInputDTO, int CoachId);
         public Task<List<SuggestionOutputDTO>> GetUserSuggestions(int UserId);
         public Task<List<SuggestionOutputDTO>> GetCoachSuggestionsForUser(int UserId, int CoachId);
+        public Task<ProblemOutputDTO> GetProblemsOfUserId(int UserId);
     }
 }

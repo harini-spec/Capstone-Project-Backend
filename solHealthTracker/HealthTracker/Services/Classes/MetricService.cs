@@ -60,13 +60,13 @@ namespace HealthTracker.Services.Classes
 
 
                 bool found = false;
+                if (!Preferences.Contains("Height"))
+                    Preferences.Add("Height");
+                if (!Preferences.Contains("Weight"))
+                    Preferences.Add("Weight");
+
                 if (Role == "User")
                 {
-                    if(!Preferences.Contains("Height"))
-                        Preferences.Add("Height");
-                    if(!Preferences.Contains("Weight"))
-                        Preferences.Add("Weight");
-
                     foreach(var pref in Preferences)
                     {
                         if (pref == "Height" && ExistingPrefs.Contains(pref))
@@ -91,6 +91,11 @@ namespace HealthTracker.Services.Classes
                 {
                     foreach (var pref in Preferences)
                     {
+                        if (pref == "Height" && ExistingPrefs.Contains(pref))
+                            continue;
+                        else if (pref == "Weight" && ExistingPrefs.Contains(pref))
+                            continue;
+
                         if (ExistingPrefs.Contains(pref))
                         {
                             found = true;
@@ -218,7 +223,8 @@ namespace HealthTracker.Services.Classes
             try
             {
                 List<PreferenceOutputDTO> result = new List<PreferenceOutputDTO>();
-                if (Role == "User")
+                var user = await _UserService.GetUserById(UserId);
+                if (Role == "User" || (user.Role == Models.ENUMs.RolesEnum.Roles.User && Role == "Coach"))
                 {
                     var prefs = await GetAllPreferencesOfUser(UserId);
 

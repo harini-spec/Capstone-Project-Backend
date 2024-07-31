@@ -43,6 +43,66 @@ namespace HealthTracker.Services.Classes
             catch { throw; }
         }
 
+        public async Task<ProblemOutputDTO> GetProblemsOfUserId(int UserId)
+        {
+            try
+            {
+                var Logs = new List<HealthLog>();
+                try
+                {
+                    Logs = await _HealthLogRepository.GetAll();
+                }
+                catch
+                {
+                    throw new NoItemsFoundException("No Problem Logs for today!");
+                }
+
+                // Filter logs for today's poor health status
+                var TodaysPoorLogs = Logs
+                    .Where(log => log.Created_at.Date == DateTime.Now.Date && log.HealthStatus == Models.ENUMs.HealthStatusEnum.HealthStatus.Poor)
+                    .ToList();
+
+                if (TodaysPoorLogs.Count == 0)
+                    throw new NoItemsFoundException("No Problem Logs for today!");
+
+                var UserPrefs = await _MetricService.GetPreferencesListOfUser(UserId, "User");
+
+                // Filter logs based on user's preferences
+                var filteredLogs = TodaysPoorLogs
+                    .Where(log => UserPrefs.Any(pref => pref.PreferenceId == log.PreferenceId))
+                    .ToList();
+
+                if (filteredLogs.Count == 0)
+                    throw new NoItemsFoundException("No Problem Logs for today!");
+
+                return await MapLogsToProblemOutputDTO(filteredLogs, UserId);
+            }
+            catch { throw; }
+        }
+
+        public async Task<ProblemOutputDTO> MapLogsToProblemOutputDTO(List<HealthLog> Logs, int UserId)
+        {
+            try
+            {
+                ProblemOutputDTO problemOutputDTO = new ProblemOutputDTO();
+                List<string> ProblemMetrics = new List<string>();
+                foreach (var log in Logs)
+                {
+                    var Preference = await _MetricService.GetPreferenceDTOByPrefId(log.PreferenceId);
+                    ProblemMetrics.Add(Preference.MetricType);
+                }
+
+                var User = await _UserService.GetUserById(UserId);
+                problemOutputDTO.UserId = UserId;
+                problemOutputDTO.UserName = User.Name;
+                problemOutputDTO.Age = User.Age;
+                problemOutputDTO.Gender = User.Gender.ToString();
+                problemOutputDTO.MetricsWithProblem = ProblemMetrics;
+                return problemOutputDTO;
+            }
+            catch { throw; }
+        }
+
         public async Task<List<ProblemOutputDTO>> GetUserIdsWithProblems(int CoachId)
         {
             try
@@ -65,10 +125,15 @@ namespace HealthTracker.Services.Classes
                 if (CoachMonitorPrefs.Count == 0)
                     throw new NoItemsFoundException("Coach Preferences not set!");
 
-                var Logs = await _HealthLogRepository.GetAll();
+                var Logs = new List<HealthLog>();
+                try
+                {
+                    Logs = await _HealthLogRepository.GetAll();
+                }
+                catch { throw new NoItemsFoundException("No Problem Logs for today!");  }
                 var TodaysPoorLogs = Logs.Where(log => log.Created_at.Date == DateTime.Now.Date && log.HealthStatus == Models.ENUMs.HealthStatusEnum.HealthStatus.Poor).ToList();
                 if (TodaysPoorLogs.Count == 0)
-                    throw new NoItemsFoundException("No Problems Logs for today!");
+                    throw new NoItemsFoundException("No Problem Logs for today!");
 
                 var Result = new List<HealthLog>();
                 foreach (var coach_pref in CoachMonitorPrefs)
@@ -81,7 +146,7 @@ namespace HealthTracker.Services.Classes
                     }
                 }
                 if(Result.Count == 0)
-                    throw new NoItemsFoundException("No Problems Logs for today!");
+                    throw new NoItemsFoundException("No Problem Logs for today!");
 
                 return await MapHealthLogsToDictionary(Result, CoachId);
             }

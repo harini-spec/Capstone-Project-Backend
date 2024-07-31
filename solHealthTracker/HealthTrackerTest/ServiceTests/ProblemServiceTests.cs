@@ -46,7 +46,7 @@ namespace HealthTrackerTest.ServiceTests
             UserRepository = new UserRepository(context);
 
             UserService = new UserService(UserRepository, null, null);
-            MetricService = new MetricService(UserPreferenceRepository, null, MetricRepository, null);
+            MetricService = new MetricService(UserPreferenceRepository, null, MetricRepository, UserService);
             ProblemService = new ProblemService(HealthLogRepository, MonitorPreferenceRepository, MetricService, SuggestionRepository, UserService);
 
             User User1 = new User()
@@ -241,7 +241,7 @@ namespace HealthTrackerTest.ServiceTests
             var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await ProblemService.GetUserIdsWithProblems(2));
 
             // Assert
-            Assert.That(exception.Message, Is.EqualTo("No Problems Logs for today!"));
+            Assert.That(exception.Message, Is.EqualTo("No Problem Logs for today!"));
         }
 
         [Test]
@@ -271,7 +271,7 @@ namespace HealthTrackerTest.ServiceTests
             var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await ProblemService.GetUserIdsWithProblems(2));
 
             // Assert
-            Assert.That(exception.Message, Is.EqualTo("No Problems Logs for today!"));
+            Assert.That(exception.Message, Is.EqualTo("No Problem Logs for today!"));
         }
 
         [Test]
@@ -429,6 +429,96 @@ namespace HealthTrackerTest.ServiceTests
 
             // Assert
             Assert.That(exception.Message, Is.EqualTo("No Suggestions Found!"));
+        }
+
+        [Test]
+        public async Task GetProblemsOfUserIdSuccessTest()
+        {
+            // Arrange
+            HealthLog healthLog = new HealthLog()
+            {
+                HealthStatus = HealthStatusEnum.HealthStatus.Poor,
+                PreferenceId = 1,
+                value = 8,
+                Created_at = DateTime.Now,
+                Updated_at = DateTime.Now
+            };
+            await HealthLogRepository.Add(healthLog);
+
+            // Action
+            var result = await ProblemService.GetProblemsOfUserId(1);
+
+            // Assert
+            Assert.That(result.MetricsWithProblem.Count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task GetProblemsOfUserIdNoLogSuccessTest()
+        {
+            // Arrange
+            await HealthLogRepository.Delete(1);
+
+            // Assert
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await ProblemService.GetProblemsOfUserId(1));
+
+            // Assert
+            Assert.That(exception.Message, Is.EqualTo("No Problem Logs for today!"));
+        }
+
+        [Test]
+        public async Task GetProblemsOfUserIdNoPoorLogsForUserSuccessTest()
+        {
+            // Arrange
+            HealthLog healthLog = new HealthLog()
+            {
+                HealthStatus = HealthStatusEnum.HealthStatus.Poor,
+                PreferenceId = 3,
+                value = 8,
+                Created_at = DateTime.Now,
+                Updated_at = DateTime.Now
+            };
+            await HealthLogRepository.Add(healthLog);
+
+            // Assert
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await ProblemService.GetProblemsOfUserId(1));
+
+            // Assert
+            Assert.That(exception.Message, Is.EqualTo("No Problem Logs for today!"));
+        }
+
+
+        [Test]
+        public async Task GetUserIdsWithProblemsNoLogsSuccessTest()
+        {
+            // Arrange
+            await HealthLogRepository.Delete(1);
+
+            // Assert
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await ProblemService.GetUserIdsWithProblems(2));
+
+            // Assert
+            Assert.That(exception.Message, Is.EqualTo("No Problem Logs for today!"));
+        }
+
+        [Test]
+        public async Task GetProblemsOfUserIdNoPoorLogsTodaySuccessTest()
+        {
+            // Arrange
+            HealthLog healthLog = new HealthLog()
+            {
+                HealthStatus = HealthStatusEnum.HealthStatus.Poor,
+                PreferenceId = 1,
+                value = 8,
+                Created_at = DateTime.Now.AddDays(-1),
+                Updated_at = DateTime.Now.AddDays(-1)
+            };
+            await HealthLogRepository.Add(healthLog);
+
+            // Assert
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await ProblemService.GetProblemsOfUserId(1));
+
+            // Assert
+            Assert.That(exception.Message, Is.EqualTo("No Problem Logs for today!"));
         }
     }
 }

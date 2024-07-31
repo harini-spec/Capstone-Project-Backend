@@ -48,10 +48,6 @@ namespace HealthTracker.Controllers
                             Role = claim.Value;
                     }
                     var result = await _MetricService.GetAllNotSelectedPrefs(UserId, Role);
-                if(Role == "Coach")
-                {
-                    result.Add("Weight"); // No Height as it won't go to poor state
-                }
                     return Ok(result);
                 }
                 catch (NoItemsFoundException nif)

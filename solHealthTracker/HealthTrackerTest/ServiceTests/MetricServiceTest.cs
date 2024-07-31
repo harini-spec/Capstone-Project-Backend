@@ -202,7 +202,7 @@ namespace HealthTrackerTest.ServiceTests
             // Arrange
             List<string> prefs = new List<string>
             {
-                "Height"
+                "Sleep_Hours"
             };
             await MetricService.AddPreference(prefs, 2, "Coach");
 
@@ -273,7 +273,7 @@ namespace HealthTrackerTest.ServiceTests
             var result = await MetricService.GetPreferencesListOfUser(2, "Coach");
 
             // Assert
-            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(result.Count, Is.EqualTo(2));
         }
 
         [Test]

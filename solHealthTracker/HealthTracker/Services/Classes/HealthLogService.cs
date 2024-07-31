@@ -38,6 +38,8 @@ namespace HealthTracker.Services.Classes
                     var filteredHealthLogs = healthlogs
                         .Where(log => log.PreferenceId == prefId)
                         .OrderBy(log => log.value).ToList();
+                    if (filteredHealthLogs.Count == 0)
+                        return true;
                     if (value < filteredHealthLogs[filteredHealthLogs.Count - 1].value)
                         return false;
                     else
