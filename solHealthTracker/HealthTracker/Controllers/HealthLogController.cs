@@ -144,5 +144,52 @@ namespace HealthTracker.Controllers
             }
             return BadRequest("All details are not provided. Please check the object");
         }
+
+        [Authorize(Roles = "User")]
+        [HttpPost("AddHealthLogDataFromGoogleFit")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<string>> AddHealthLogDataFromGoogleFit(List<AddHealthLogFromGoogleFitInputDTO> addHealthLogFromGoogleFitInputDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    int UserId = -1;
+                    foreach (var claim in User.Claims)
+                    {
+                        if (claim.Type == "ID")
+                            UserId = Convert.ToInt32(claim.Value);
+                    }
+                    var result = await _HealthLogService.AddHealthLogDataFromGoogleFit(addHealthLogFromGoogleFitInputDTO, UserId);
+                    return Ok(result);
+                }
+                catch (InvalidDataException ide)
+                {
+                    return BadRequest(new ErrorModel(400, ide.Message));
+                }
+                catch (NoItemsFoundException nif)
+                {
+                    return NotFound(new ErrorModel(404, nif.Message));
+                }
+                catch (EntityNotFoundException enf)
+                {
+                    return NotFound(new ErrorModel(404, enf.Message));
+                }
+                catch (EntityAlreadyExistsException tae)
+                {
+                    return Conflict(new ErrorModel(409, tae.Message));
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new ErrorModel(500, ex.Message));
+                }
+            }
+            return BadRequest("All details are not provided. Please check the object");
+        }
     }
 }

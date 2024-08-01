@@ -90,6 +90,7 @@ namespace HealthTracker
             builder.Services.AddScoped<IRepository<int, User>, UserRepository>();
             builder.Services.AddScoped<IRepository<int, UserDetail>, UserDetailRepository>();
             builder.Services.AddScoped<IRepository<int, UserPreference>, UserPreferenceRepository>();
+            builder.Services.AddScoped<IRepository<int, OAuthAccessTokenModel>, OAuthAccessTokenRepository>();
             #endregion
 
             #region services 
@@ -100,6 +101,7 @@ namespace HealthTracker
             builder.Services.AddScoped<ITargetService, TargetService>();
             builder.Services.AddScoped<IGraphService, GraphService>();
             builder.Services.AddScoped<IProblemService, ProblemService>();
+            builder.Services.AddScoped<IOAuthTokenService, OAuthTokenService>();
             #endregion
 
 

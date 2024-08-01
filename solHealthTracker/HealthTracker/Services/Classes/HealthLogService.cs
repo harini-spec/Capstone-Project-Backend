@@ -200,6 +200,40 @@ namespace HealthTracker.Services.Classes
             catch { throw; }
         }
 
+        public async Task<string> AddHealthLogDataFromGoogleFit(List<AddHealthLogFromGoogleFitInputDTO> addHealthLogFromGoogleFitInputDTO, int UserId)
+        {
+            try
+            {
+                foreach(var inputdata in addHealthLogFromGoogleFitInputDTO)
+                {
+                    var prefId = 0;
+                    try
+                    {
+                        prefId = await _MetricService.FindPreferenceIdFromMetricTypeAndUserId(inputdata.MetricType, UserId);
+                    }
+                    catch { continue; }
+                    if (inputdata.Value != 0)
+                    {
+                        try
+                        {
+                            var ExistingLog = await GetHealthLog(prefId, UserId);
+                            await UpdateHealthLog(ExistingLog.Id, inputdata.Value, UserId);
+                        }
+                        catch (NoItemsFoundException)
+                        {
+                            AddHealthLogInputDTO addHealthLog = new AddHealthLogInputDTO();
+                            addHealthLog.PreferenceId = prefId;
+                            addHealthLog.value = inputdata.Value;
+                            await AddHealthLog(addHealthLog, UserId);
+                        }
+                    }
+                    else continue;
+                }
+                return "Successfully added!";
+            }
+            catch { throw; }
+        }
+
         #region Mappers
 
         private async Task<GetHealthLogOutputDTO> MapHealthLogToGetHealthLogOutputDTO(HealthLog healthlog, int UserId)

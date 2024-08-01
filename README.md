@@ -136,6 +136,11 @@ ENUM Gender         - Female, Male, Others
 - suggestions for user
 - O/P: List of suggestions of user 
 
+### Google FIT Data
+`POST/Add google fit data to DB`
+`POST/Add OAuth Access token to DB`
+`GET/Get OAuth Access token from DB`
+
 ### Coach:
 `POST/Coach monitor Preferences` 
 - I/P: Metric list
