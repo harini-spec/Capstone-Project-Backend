@@ -8,6 +8,8 @@ using Newtonsoft.Json.Linq;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Newtonsoft.Json;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 
 
 namespace HealthTracker.Services.Classes
@@ -16,14 +18,30 @@ namespace HealthTracker.Services.Classes
     {
         private readonly IRepository<int, OAuthAccessTokenModel> _OAuthTokenRepository;
         private static readonly HttpClient HttpClient = new HttpClient();
-        private readonly string Client_ID;
-        private readonly string Client_Secret;
 
-        public OAuthTokenService(IConfiguration configuration, IRepository<int, OAuthAccessTokenModel> oAuthTokenRepository)
+        public OAuthTokenService(IRepository<int, OAuthAccessTokenModel> oAuthTokenRepository)
         {
-            Client_ID = configuration.GetSection("OAuth").GetSection("GOOGLE_CLIENT_ID").Value.ToString();
-            Client_Secret = configuration.GetSection("OAuth").GetSection("GOOGLE_CLIENT_SECRET").Value.ToString();
             _OAuthTokenRepository = oAuthTokenRepository;
+        }
+
+        public async Task<string> GetSecretKey()
+        {
+            var keyVaultName = "HealthSync";
+            var kvUri = $"https://{keyVaultName}.vault.azure.net";
+            var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
+            var client_id = await client.GetSecretAsync("GoogleClientSecret");
+            var secret = client_id.Value.Value;
+            return secret;
+        }
+
+        public async Task<string> GetClientID()
+        {
+            var keyVaultName = "HealthSync";
+            var kvUri = $"https://{keyVaultName}.vault.azure.net";
+            var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
+            var client_secret = await client.GetSecretAsync("GoogleClientId");
+            var secret = client_secret.Value.Value;
+            return secret;
         }
 
         public async Task<string> AddOrUpdateAccessTokenToDB(OAuthAccessTokenDTO accessToken, int UserId)
@@ -85,8 +103,8 @@ namespace HealthTracker.Services.Classes
                 {
                     Content = new FormUrlEncodedContent(new Dictionary<string, string>
                     {
-                        { "client_id", Client_ID },
-                        { "client_secret", Client_Secret },
+                        { "client_id", await GetClientID() },
+                        { "client_secret", await GetSecretKey() },
                         { "refresh_token", refreshToken },
                         { "grant_type", "refresh_token" }
                     })
@@ -115,7 +133,7 @@ namespace HealthTracker.Services.Classes
                 oAuthAccessTokenDTO.AccessToken = token.AccessToken;
                 return oAuthAccessTokenDTO;
             }
-            catch (EntityNotFoundException)
+            catch
             {
                 throw new EntityNotFoundException("No Access Token found!");
             }

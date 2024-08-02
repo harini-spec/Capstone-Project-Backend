@@ -108,8 +108,8 @@ namespace HealthTrackerTest.ServiceTests
                 HealthStatus = HealthStatusEnum.HealthStatus.Fair,
                 PreferenceId = 1,
                 value = 8,
-                Created_at = DateTime.Now.AddDays(-7),
-                Updated_at = DateTime.Now.AddMonths(-7)
+                Created_at = GraphService.GetPreviousSunday(),
+                Updated_at = GraphService.GetPreviousSunday()
             };
             await HealthLogRepository.Add(healthLog2);
             HealthLog healthLog3 = new HealthLog()
@@ -159,7 +159,7 @@ namespace HealthTrackerTest.ServiceTests
             var result = await GraphService.GetGraphData("Sleep_Hours", "This Month", 1);
 
             // Assert
-            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result.Count, Is.EqualTo(1));
         }
 
         [Test]
@@ -169,7 +169,7 @@ namespace HealthTrackerTest.ServiceTests
             var result = await GraphService.GetGraphData("Sleep_Hours", "Last Month", 1);
 
             // Assert
-            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(result.Count, Is.EqualTo(2));
         }
 
         [Test]

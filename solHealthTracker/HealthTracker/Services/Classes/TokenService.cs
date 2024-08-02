@@ -1,4 +1,6 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -7,22 +9,29 @@ namespace HealthTracker.Services.Classes
 {
     public class TokenService : ITokenService
     {
-        private readonly string _secretKey;
-        private readonly SymmetricSecurityKey _key;
-
-
-        public TokenService(IConfiguration configuration)
+        public TokenService()
         {
-            _secretKey = configuration.GetSection("TokenKey").GetSection("JWT").Value.ToString();
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+        }
+
+        public async Task<string> GetSecretKey()
+        {
+            var keyVaultName = "HealthSync";
+            var kvUri = $"https://{keyVaultName}.vault.azure.net";
+            var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
+            var jwt_secret = await client.GetSecretAsync("JWTToken");
+            var secret = jwt_secret.Value.Value;
+            return secret;
         }
 
 
         #region GenerateToken
 
         // Generate JWT token with Symmetric key
-        public string GenerateToken<T>(T user)
+        public async Task<string> GenerateToken<T>(T user)
         {
+            string secret_key = await GetSecretKey();
+            SymmetricSecurityKey _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret_key));
+
             string token = string.Empty;
             var claims = new List<Claim>();
 

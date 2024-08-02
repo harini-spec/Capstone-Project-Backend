@@ -70,7 +70,7 @@ namespace HealthTracker.Services.Classes
                     // Checking if account is active
                     if (userDetail.Status.ToString() == "Active")
                     {
-                        LoginOutputDTO loginOutputDTO = MapUserToLoginOutputDTO(user);
+                        LoginOutputDTO loginOutputDTO = await MapUserToLoginOutputDTO(user);
                         return loginOutputDTO;
                     }
                     throw new UserNotActiveException("Your account is not activated yet");
@@ -180,14 +180,14 @@ namespace HealthTracker.Services.Classes
 
         #region Mappers
 
-        private LoginOutputDTO MapUserToLoginOutputDTO(User user)
+        private async Task<LoginOutputDTO> MapUserToLoginOutputDTO(User user)
         {
             LoginOutputDTO loginOutputDTO = new LoginOutputDTO();
 
             loginOutputDTO.UserID = user.UserId;
             loginOutputDTO.UserName = user.Name;
             loginOutputDTO.Role = user.Role.ToString();
-            loginOutputDTO.Token = _tokenService.GenerateToken(user);
+            loginOutputDTO.Token = await _tokenService.GenerateToken(user);
             loginOutputDTO.IsPreferenceSet = user.is_preferenceSet;
 
             return loginOutputDTO;

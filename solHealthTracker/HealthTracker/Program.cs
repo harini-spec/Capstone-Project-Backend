@@ -1,3 +1,5 @@
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using HealthTracker.Models;
 using HealthTracker.Models.DBModels;
 using HealthTracker.Repositories.Classes;
@@ -14,8 +16,9 @@ using System.Text;
 namespace HealthTracker
 {
     public class Program
-    {
-        public static void Main(string[] args)
+    { 
+
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +54,13 @@ namespace HealthTracker
             });
             });
 
+            var keyVaultName = "HealthSync";
+            var kvUri = $"https://{keyVaultName}.vault.azure.net";
+            var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
+
+            var jwt_secret = await client.GetSecretAsync("JWTToken");
+            var secret = jwt_secret.Value.Value;
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -59,9 +69,8 @@ namespace HealthTracker
                         ValidateIssuer = false,
                         ValidateAudience = false,
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["TokenKey:JWT"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
                     };
-
                 });
 
             #region CORS
@@ -75,8 +84,12 @@ namespace HealthTracker
             #endregion
 
             #region contexts
+            const string DBsecretName = "HealthSyncdbConnectionString";
+            var connection_secret = await client.GetSecretAsync(DBsecretName);
+            var connectionString = connection_secret.Value.Value;
+
             builder.Services.AddDbContext<HealthTrackerContext>(
-               options => options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection"))
+               options => options.UseSqlServer(connectionString)
                );
             #endregion
 

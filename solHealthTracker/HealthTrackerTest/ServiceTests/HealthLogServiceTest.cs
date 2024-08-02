@@ -538,7 +538,34 @@ namespace HealthTrackerTest.ServiceTests
         {
             // Action
             var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await HealthLogService.UpdateHealthLog(100, 9, 1));
+        }
 
+        [Test]
+        public async Task AddHealthLogDataFromGoogleFitSuccessTest()
+        {
+            List<AddHealthLogFromGoogleFitInputDTO> addHealthLogFromGoogleFitInputDTO = new List<AddHealthLogFromGoogleFitInputDTO>();
+            AddHealthLogFromGoogleFitInputDTO healthLogFromGoogleFitInputDTO = new AddHealthLogFromGoogleFitInputDTO();
+            healthLogFromGoogleFitInputDTO.MetricType = "Sleep_Hours";
+            healthLogFromGoogleFitInputDTO.Value = 8;
+            addHealthLogFromGoogleFitInputDTO.Add(healthLogFromGoogleFitInputDTO);
+
+            var result = await HealthLogService.AddHealthLogDataFromGoogleFit(addHealthLogFromGoogleFitInputDTO, 1);
+
+            Assert.That(result, Is.EqualTo("Successfully added!"));
+        }
+
+        [Test]
+        public async Task AddHealthLogDataFromGoogleFitNoPrefExceptionTest()
+        {
+            List<AddHealthLogFromGoogleFitInputDTO> addHealthLogFromGoogleFitInputDTO = new List<AddHealthLogFromGoogleFitInputDTO>();
+            AddHealthLogFromGoogleFitInputDTO healthLogFromGoogleFitInputDTO = new AddHealthLogFromGoogleFitInputDTO();
+            healthLogFromGoogleFitInputDTO.MetricType = "Steps_Count";
+            healthLogFromGoogleFitInputDTO.Value = 60;
+            addHealthLogFromGoogleFitInputDTO.Add(healthLogFromGoogleFitInputDTO);
+
+            var result = await HealthLogService.AddHealthLogDataFromGoogleFit(addHealthLogFromGoogleFitInputDTO, 1);
+
+            Assert.That(result, Is.EqualTo("Successfully added!"));
         }
     }
 }

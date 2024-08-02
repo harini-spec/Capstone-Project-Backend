@@ -10,6 +10,6 @@
         /// <param name="user">Generic Object</param>
         /// <returns>Generated Token string</returns>
         #endregion
-        public string GenerateToken<T>(T user); // Coach and User
+        public Task<string> GenerateToken<T>(T user);
     }
 }
