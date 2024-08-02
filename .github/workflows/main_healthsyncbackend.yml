@@ -20,19 +20,19 @@ jobs:
           include-prerelease: true
 
       - name: Restore dependencies
-        run: dotnet restore solhealthtracker/solHealthTracker.sln
+        run: dotnet restore solHealthTracker/solHealthTracker.sln
 
       - name: Build with dotnet
-        run: dotnet build solhealthtracker/solHealthTracker.sln --configuration Release
+        run: dotnet build solHealthTracker/solHealthTracker.sln --configuration Release
 
       - name: Publish with dotnet
-        run: dotnet publish solhealthtracker/solHealthTracker.sln --configuration Release --output ${{ github.workspace }}/solhealthtracker/myapp
+        run: dotnet publish solHealthTracker/solHealthTracker.sln --configuration Release --output ${{ github.workspace }}/solHealthTracker/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: dotnet-app
-          path: ${{ github.workspace }}/solhealthtracker/myapp
+          path: ${{ github.workspace }}/solHealthTracker/myapp
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,7 +46,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dotnet-app
-          path: ${{ github.workspace }}/solhealthtracker/myapp
+          path: ${{ github.workspace }}/solHealthTracker/myapp
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -55,4 +55,4 @@ jobs:
           app-name: 'HealthSyncBackend'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6590FB2411844D7E9C5294542F0251B7 }}
-          package: ${{ github.workspace }}/solhealthtracker/myapp
+          package: ${{ github.workspace }}/solHealthTracker/myapp
