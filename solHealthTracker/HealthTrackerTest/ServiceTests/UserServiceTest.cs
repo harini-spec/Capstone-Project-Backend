@@ -45,7 +45,7 @@ namespace HealthTrackerTest.ServiceTests
             configTokenSection.Setup(x => x.GetSection("JWT")).Returns(configurationJWTSection.Object);
             Mock<IConfiguration> mockConfig = new Mock<IConfiguration>();
             mockConfig.Setup(x => x.GetSection("TokenKey")).Returns(configTokenSection.Object);
-            tokenService = new TokenService(mockConfig.Object);
+            tokenService = new TokenService();
 
             userService = new UserService(UserRepo, UserDetailRepo, tokenService);
 
