@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'HealthSyncBackend'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F95E04FBA3424EA6A705833FD5805014 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6590FB2411844D7E9C5294542F0251B7 }}
           package: .
