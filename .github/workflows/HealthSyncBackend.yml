@@ -33,26 +33,18 @@ jobs:
         with:
           name: dotnet-app
           path: ${{ github.workspace }}/solHealthTracker/myapp
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: dotnet-app
-          path: ${{ github.workspace }}/solHealthTracker/myapp
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'HealthSyncBackend'
-          slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6590FB2411844D7E9C5294542F0251B7 }}
-          package: ${{ github.workspace }}/solHealthTracker/myapp
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v3
+      with:
+        name: webapp
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+    - name: Deploy to Azure WebApp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.HealthSyncBackend_ADB1 }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
