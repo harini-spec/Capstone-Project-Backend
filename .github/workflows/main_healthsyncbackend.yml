@@ -20,13 +20,13 @@ jobs:
           include-prerelease: true
 
       - name: Restore dependencies
-        run: dotnet restore solhealthtracker/HealthSyncBackend.sln
+        run: dotnet restore solhealthtracker/solHealthTracker.sln
 
       - name: Build with dotnet
-        run: dotnet build solhealthtracker/HealthSyncBackend.sln --configuration Release
+        run: dotnet build solhealthtracker/solHealthTracker.sln --configuration Release
 
       - name: Publish with dotnet
-        run: dotnet publish solhealthtracker/HealthSyncBackend.sln --configuration Release --output ${{ github.workspace }}/solhealthtracker/myapp
+        run: dotnet publish solhealthtracker/solHealthTracker.sln --configuration Release --output ${{ github.workspace }}/solhealthtracker/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
