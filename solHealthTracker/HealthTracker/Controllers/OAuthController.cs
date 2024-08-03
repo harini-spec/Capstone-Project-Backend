@@ -76,5 +76,22 @@ namespace HealthTracker.Controllers
                     return BadRequest(new ErrorModel(500, ex.Message));
                 }
         }
+
+        [Authorize(Roles = "User")]
+        [HttpGet("GetOAuthCreds")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<OAuthCredsResponseDTO>> GetOAuthCreds()
+        {
+            try
+            {
+                var result = await _OAuthTokenService.GetOAuthCreds();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorModel(500, ex.Message));
+            }
+        }
     }
 }

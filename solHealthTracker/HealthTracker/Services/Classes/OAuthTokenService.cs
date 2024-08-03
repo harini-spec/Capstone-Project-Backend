@@ -44,6 +44,15 @@ namespace HealthTracker.Services.Classes
             return secret;
         }
 
+
+        public async Task<OAuthCredsResponseDTO> GetOAuthCreds()
+        {
+            OAuthCredsResponseDTO responseDTO = new OAuthCredsResponseDTO();
+            responseDTO.ClientId = await GetClientID();
+            responseDTO.ClientSecret = await GetSecretKey();
+            return responseDTO;
+        }
+
         public async Task<string> AddOrUpdateAccessTokenToDB(OAuthAccessTokenDTO accessToken, int UserId)
         {
             try

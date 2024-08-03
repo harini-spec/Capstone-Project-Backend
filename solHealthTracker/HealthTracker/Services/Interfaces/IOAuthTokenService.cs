@@ -6,5 +6,6 @@ namespace HealthTracker.Services.Interfaces
     {
         public Task<string> AddOrUpdateAccessTokenToDB(OAuthAccessTokenDTO accessToken, int UserId);
         public Task<OAuthAccessTokenDTO> GetAccessTokenDTO(int UserId);
+        public Task<OAuthCredsResponseDTO> GetOAuthCreds();
     }
 }
