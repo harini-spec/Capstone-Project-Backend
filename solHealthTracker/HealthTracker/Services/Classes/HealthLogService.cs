@@ -94,6 +94,40 @@ namespace HealthTracker.Services.Classes
             }
         }
 
+        public async Task<AddHealthLogOutputDTO> AddGFitHeightData(AddHealthLogInputDTO healthLogInputDTO, int UserId)
+        {
+            try
+            {
+                var healthlogs = await _HealthLogRepository.GetAll();
+                var filteredHealthLogs = healthlogs
+                    .Where(log => log.PreferenceId == healthLogInputDTO.PreferenceId && log.Created_at.Date == DateTime.Now.Date)
+                    .ToList();
+                if (filteredHealthLogs.Count != 0)
+                    throw new EntityAlreadyExistsException("Health Log already entered!");
+                else throw new NoItemsFoundException();
+            }
+            catch (NoItemsFoundException)
+            {
+                HealthLog healthLog = new HealthLog();
+                healthLog.PreferenceId = healthLogInputDTO.PreferenceId;
+                healthLog.value = healthLogInputDTO.value;
+                healthLog.Created_at = DateTime.Now;
+                healthLog.Updated_at = DateTime.Now;
+                healthLog.HealthStatus = await calculateHealthStatus(healthLogInputDTO, UserId);
+                await _HealthLogRepository.Add(healthLog);
+
+                AddHealthLogOutputDTO healthLogOutputDTO = new AddHealthLogOutputDTO();
+                healthLogOutputDTO.HealthLogId = healthLog.Id;
+                healthLogOutputDTO.HealthStatus = healthLog.HealthStatus.ToString();
+                try
+                {
+                    healthLogOutputDTO.TargetStatus = await _TargetService.calculateTargetStatus(healthLogInputDTO, UserId);
+                }
+                catch (NoItemsFoundException) { healthLogOutputDTO.TargetStatus = null; }
+                return healthLogOutputDTO;
+            }
+        }
+
         public async Task<GetHealthLogOutputDTO> GetHealthLog(int PrefId, int UserId)
         {
             try
@@ -224,7 +258,12 @@ namespace HealthTracker.Services.Classes
                             AddHealthLogInputDTO addHealthLog = new AddHealthLogInputDTO();
                             addHealthLog.PreferenceId = prefId;
                             addHealthLog.value = inputdata.Value;
-                            await AddHealthLog(addHealthLog, UserId);
+                            if (inputdata.MetricType == "Height")
+                            {
+                                await AddGFitHeightData(addHealthLog, UserId);
+                            }
+                            else
+                                await AddHealthLog(addHealthLog, UserId);
                         }
                     }
                     else continue;
