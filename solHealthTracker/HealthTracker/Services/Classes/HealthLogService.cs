@@ -36,7 +36,7 @@ namespace HealthTracker.Services.Classes
                 {
                     var healthlogs = await _HealthLogRepository.GetAll();
                     var filteredHealthLogs = healthlogs
-                        .Where(log => log.PreferenceId == prefId)
+                        .Where(log => log.PreferenceId == prefId && log.Created_at.Date != DateTime.Now.Date)
                         .OrderBy(log => log.value).ToList();
                     if (filteredHealthLogs.Count == 0)
                         return true;
@@ -128,6 +128,38 @@ namespace HealthTracker.Services.Classes
             }
         }
 
+        public async Task<AddHealthLogOutputDTO> UpdateGFitHeightLog(int HealthLogId, float value, int UserId)
+        {
+            HealthLog log = null;
+            try
+            {
+                log = await _HealthLogRepository.GetById(HealthLogId);
+                log.value = value;
+                log.Updated_at = DateTime.Now;
+
+                if (!await IsDataCorrect(log.PreferenceId, value))
+                {
+                    throw new InvalidDataException("Height value is wrong!");
+                }
+
+                AddHealthLogInputDTO healthLogInput = new AddHealthLogInputDTO();
+                healthLogInput.PreferenceId = log.PreferenceId;
+                healthLogInput.value = value;
+                log.HealthStatus = await calculateHealthStatus(healthLogInput, UserId);
+                await _HealthLogRepository.Update(log);
+
+                AddHealthLogOutputDTO healthLogOutputDTO = new AddHealthLogOutputDTO();
+                healthLogOutputDTO.HealthLogId = log.Id;
+                healthLogOutputDTO.HealthStatus = log.HealthStatus.ToString();
+                healthLogOutputDTO.TargetStatus = await _TargetService.calculateTargetStatus(healthLogInput, UserId);
+                return healthLogOutputDTO;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public async Task<GetHealthLogOutputDTO> GetHealthLog(int PrefId, int UserId)
         {
             try
@@ -151,11 +183,6 @@ namespace HealthTracker.Services.Classes
                 log = await _HealthLogRepository.GetById(HealthLogId);
                 log.value = value;
                 log.Updated_at = DateTime.Now;
-
-                if (!await IsDataCorrect(log.PreferenceId, value))
-                {
-                    throw new InvalidDataException("Height value is wrong!");
-                }
 
                 AddHealthLogInputDTO healthLogInput = new AddHealthLogInputDTO();
                 healthLogInput.PreferenceId = log.PreferenceId;
@@ -251,6 +278,10 @@ namespace HealthTracker.Services.Classes
                         try
                         {
                             var ExistingLog = await GetHealthLog(prefId, UserId);
+                            if(inputdata.MetricType == "Height")
+                            {
+                                await UpdateGFitHeightLog(ExistingLog.Id, inputdata.Value, UserId);
+                            }
                             await UpdateHealthLog(ExistingLog.Id, inputdata.Value, UserId);
                         }
                         catch (NoItemsFoundException)
