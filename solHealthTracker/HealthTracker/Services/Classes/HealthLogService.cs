@@ -137,11 +137,6 @@ namespace HealthTracker.Services.Classes
                 log.value = value;
                 log.Updated_at = DateTime.Now;
 
-                if (!await IsDataCorrect(log.PreferenceId, value))
-                {
-                    throw new InvalidDataException("Height value is wrong!");
-                }
-
                 AddHealthLogInputDTO healthLogInput = new AddHealthLogInputDTO();
                 healthLogInput.PreferenceId = log.PreferenceId;
                 healthLogInput.value = value;
