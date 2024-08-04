@@ -70,6 +70,7 @@ namespace HealthTracker.Services.Classes
                 foreach (var user in data)
                 {
                     GetCoachDataDTO getCoachDataDTO = new GetCoachDataDTO();
+                    getCoachDataDTO.CoachId = user.UserId;
                     getCoachDataDTO.Name = user.Name;
                     getCoachDataDTO.Age = user.Age;
                     getCoachDataDTO.Gender = user.Gender.ToString();
