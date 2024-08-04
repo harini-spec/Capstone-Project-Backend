@@ -1,7 +1,9 @@
-﻿namespace HealthTracker.Services.Interfaces
+﻿using HealthTracker.Models.DTOs.Coach;
+
+namespace HealthTracker.Services.Interfaces
 {
-    public class ICoachService
+    public interface ICoachService
     {
-        // public async Task<List<>> GetAllInactiveCoach(int AdminId);
+        public Task<List<GetCoachDataDTO>> GetAllInactiveCoach();
     }
 }
