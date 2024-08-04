@@ -11,12 +11,32 @@ namespace HealthTracker.Services.Classes
         private readonly IRepository<int, User> _UserRepository;
         private readonly IRepository<int, CoachCertificate> _CoachCertificateRepository;
         private readonly IRepository<int, UserDetail> _UserDetailRepository;
+        private readonly IEmailService _EmailService;
 
-        public CoachService(IRepository<int, User> userRepository, IRepository<int, CoachCertificate> coachCertificateRepository, IRepository<int, UserDetail> userDetailRepository)
+        public CoachService(IRepository<int, User> userRepository, IRepository<int, CoachCertificate> coachCertificateRepository, IRepository<int, UserDetail> userDetailRepository, IEmailService emailService)
         {
             _UserRepository = userRepository;
             _CoachCertificateRepository = coachCertificateRepository;
             _UserDetailRepository = userDetailRepository;
+            _EmailService = emailService;
+        }
+
+        public async Task<string> ActivateCoach(int coachId)
+        {
+            try
+            {
+                var coachdetails = await _UserDetailRepository.GetById(coachId);
+                if(coachdetails.Status == Models.ENUMs.UserStatusEnum.UserStatus.Active)
+                {
+                    throw new InvalidActionException("Account already activated!");
+                }
+                coachdetails.Status = Models.ENUMs.UserStatusEnum.UserStatus.Active;
+                var coach = await _UserRepository.GetById(coachId);
+                await _EmailService.SendEmailAsync(coach.Email, coach.Name);
+                await _UserDetailRepository.Update(coachdetails);
+                return "Successfully activated!";
+            }
+            catch { throw; }
         }
 
         public async Task<List<GetCoachDataDTO>> GetAllInactiveCoach()
@@ -39,6 +59,8 @@ namespace HealthTracker.Services.Classes
             }
             catch { throw; }
         }
+
+
 
         private async Task<List<GetCoachDataDTO>> MapCoachDataToCoachDTO(List<User> data)
         {

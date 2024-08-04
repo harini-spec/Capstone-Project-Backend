@@ -170,3 +170,4 @@ ENUM Gender         - Female, Male, Others
 
 ### Admin:
 `GET/Get all inactive coaches`
+`PUT/Activate Coach Account`

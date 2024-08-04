@@ -118,6 +118,7 @@ namespace HealthTracker
             builder.Services.AddScoped<IOAuthTokenService, OAuthTokenService>();
             builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
             builder.Services.AddScoped<ICoachService, CoachService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
             #endregion
 
 
