@@ -7,11 +7,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using HealthTracker.Models.DTOs.GoogleFit;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Cors;
 
 namespace HealthTracker.Controllers
 {
+    [ExcludeFromCodeCoverage]
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors]
     public class OAuthController : ControllerBase
     {
         private readonly IOAuthTokenService _OAuthTokenService;

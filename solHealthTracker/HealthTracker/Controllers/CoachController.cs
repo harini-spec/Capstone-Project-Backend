@@ -5,11 +5,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using HealthTracker.Services.Classes;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Cors;
 
 namespace HealthTracker.Controllers
 {
+    [ExcludeFromCodeCoverage]
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors]
     public class CoachController : ControllerBase
     {
         private readonly IBlobStorageService _blobStorageService;

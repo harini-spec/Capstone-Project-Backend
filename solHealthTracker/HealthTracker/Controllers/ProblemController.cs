@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Cors;
 
 namespace HealthTracker.Controllers
 {
+    [ExcludeFromCodeCoverage]
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors]

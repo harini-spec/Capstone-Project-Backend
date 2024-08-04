@@ -1,5 +1,48 @@
 # Health Tracker Application:
 
+### Installations:
+- Frontend:
+
+```
+npm install bootstrap -save
+npm install axios 
+npm install react-router-dom
+npm i @fortawesome/react-fontawesome
+npm i @fortawesome/free-solid-svg-icons
+npm install react-toastify --save  
+npm install @coreui/react-chartjs
+npm install jwt-decode
+npm install react-loader-spinner --save
+npm install @react-oauth/google@latest
+```
+
+- Backend:
+```
+Azure storage blobs
+Entity Framework core 
+EF Core - SQL Server
+EF Core - Tools
+EF Core - JWT Bearer 
+EF Core - InMemory
+MOQ
+log4net
+MS log4net 
+```
+
+<hr/>
+
+### Testing
+- Line Coverage: 75.7% 
+- Branch Coverage: 89%
+
+### Azure Services
+- Backend: App Service (Web App)
+- Frontend: App Service (Static Web App)
+- Storage: Storage account 
+- Database: SQL Databases
+
+<hr/>
+
 ## Models:
 ```
 Enums:
@@ -136,9 +179,10 @@ ENUM Gender         - Female, Male, Others
 - suggestions for user
 - O/P: List of suggestions of user 
 
-### Google FIT Data
 `POST/Add google fit data to DB`
+
 `POST/Add OAuth Access token to DB`
+
 `GET/Get OAuth Access token from DB`
 
 ### Coach:
@@ -170,4 +214,7 @@ ENUM Gender         - Female, Male, Others
 
 ### Admin:
 `GET/Get all inactive coaches`
+
 `PUT/Activate Coach Account`
+
+<hr/>

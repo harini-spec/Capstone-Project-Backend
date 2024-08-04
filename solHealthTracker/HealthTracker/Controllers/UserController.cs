@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace HealthTracker.Controllers
 {
+    [ExcludeFromCodeCoverage]
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors]

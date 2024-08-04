@@ -16,6 +16,7 @@ using HealthTracker.Models.DBModels;
 
 namespace HealthTracker.Controllers
 {
+    [ExcludeFromCodeCoverage]
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors]

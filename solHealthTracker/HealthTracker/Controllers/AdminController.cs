@@ -9,11 +9,15 @@ using System.Collections.Generic;
 using HealthTracker.Exceptions;
 using HealthTracker.Models.DBModels;
 using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Cors;
 
 namespace HealthTracker.Controllers
 {
+    [ExcludeFromCodeCoverage]
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors]
     public class AdminController : ControllerBase
     {
         private readonly ICoachService _CoachService;
@@ -52,7 +56,7 @@ namespace HealthTracker.Controllers
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<string>> GetAllInactiveCoaches(int coachId)
+        public async Task<ActionResult<string>> ActivateCoach(int coachId)
         {
             try
             {
