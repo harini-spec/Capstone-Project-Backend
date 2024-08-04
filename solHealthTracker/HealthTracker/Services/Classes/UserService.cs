@@ -203,10 +203,10 @@ namespace HealthTracker.Services.Classes
 
             userDetail.Status = UserStatusEnum.UserStatus.Active;
 
-            //if (registerInputDTO.Role.ToString() == "User")
-            //    userDetail.Status = UserStatusEnum.UserStatus.Active;
-            //else if (registerInputDTO.Role.ToString() == "Coach")
-            //    userDetail.Status = UserStatusEnum.UserStatus.Inactive;
+            if (registerInputDTO.Role.ToString() == "User" || registerInputDTO.Role.ToString() == "Admin")
+                userDetail.Status = UserStatusEnum.UserStatus.Active;
+            else if (registerInputDTO.Role.ToString() == "Coach")
+                userDetail.Status = UserStatusEnum.UserStatus.Inactive;
 
             userDetail.Created_at = DateTime.Now;
             userDetail.Updated_at = DateTime.Now;
