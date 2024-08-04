@@ -24,17 +24,20 @@ namespace HealthTracker.Migrations
 
             modelBuilder.Entity("HealthTracker.Models.DBModels.Certificate", b =>
                 {
-                    b.Property<int>("CoachId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CoachId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CertificateURL")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("CoachId");
+                    b.Property<int>("CoachId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Certificates");
                 });
