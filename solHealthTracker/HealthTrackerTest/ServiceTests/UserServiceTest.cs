@@ -90,7 +90,7 @@ namespace HealthTrackerTest.ServiceTests
             var result = await userService.RegisterUser(User);
 
             // Assert
-            Assert.That(result, Is.EqualTo("Registered Successfully!"));
+            Assert.That(result, Is.EqualTo(1));
         }
 
         [Test]
