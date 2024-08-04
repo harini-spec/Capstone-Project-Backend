@@ -154,7 +154,7 @@ namespace HealthTrackerTest.ServiceTests
                 PreferenceId = 3,
                 value = float.Parse("1.5")
             };
-            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1);
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1, false);
             var log = await HealthLogRepository.GetById(1);
             log.Created_at = DateTime.Now.AddDays(-1);
             await HealthLogRepository.Update(log);
@@ -165,7 +165,7 @@ namespace HealthTrackerTest.ServiceTests
             };
 
             // Action
-            var result = await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1);
+            var result = await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1, false);
 
             // Assert
             Assert.That(result.HealthStatus, Is.EqualTo("No_Status"));
@@ -180,7 +180,7 @@ namespace HealthTrackerTest.ServiceTests
                 PreferenceId = 3,
                 value = float.Parse("1.5")
             };
-            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1);
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1, false);
             var log = await HealthLogRepository.GetById(1);
             log.Created_at = DateTime.Now.AddDays(-1);
             await HealthLogRepository.Update(log);
@@ -191,7 +191,7 @@ namespace HealthTrackerTest.ServiceTests
             };
 
             // Action
-            var exception = Assert.ThrowsAsync<InvalidDataException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1));
+            var exception = Assert.ThrowsAsync<InvalidDataException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1, false));
         }
 
         [Test]
@@ -203,7 +203,7 @@ namespace HealthTrackerTest.ServiceTests
                 PreferenceId = 3,
                 value = float.Parse("1.5")
             };
-            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1);
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1, false);
             var log = await HealthLogRepository.GetById(1);
             log.Created_at = DateTime.Now.AddDays(-1);
             await HealthLogRepository.Update(log);
@@ -212,10 +212,10 @@ namespace HealthTrackerTest.ServiceTests
                 PreferenceId = 3,
                 value = float.Parse("1.6")
             };
-            await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1);
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1, false);
 
             // Action
-            var exception = Assert.ThrowsAsync<InvalidDataException>(async () => await HealthLogService.UpdateHealthLog(2, float.Parse("1.3"), 1));
+            var exception = Assert.ThrowsAsync<InvalidDataException>(async () => await HealthLogService.UpdateHealthLog(2, float.Parse("1.3"), 1, false));
         }
 
         [Test]
@@ -229,7 +229,7 @@ namespace HealthTrackerTest.ServiceTests
             };
 
             // Action
-            var result = await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1);
+            var result = await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1, false);
 
             // Assert
             Assert.That(result.HealthStatus, Is.EqualTo("Fair"));
@@ -244,7 +244,7 @@ namespace HealthTrackerTest.ServiceTests
                 PreferenceId = 3,
                 value = float.Parse("1.5")
             };
-            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1);
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1, false);
             AddHealthLogInputDTO addHealthLogInputDTO2 = new AddHealthLogInputDTO()
             {
                 PreferenceId = 2,
@@ -252,7 +252,7 @@ namespace HealthTrackerTest.ServiceTests
             };
 
             // Action
-            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1));
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1, false));
 
             // Assert
             Assert.That(exception.Message, Is.EqualTo("No Ideal Value data found!"));
@@ -269,7 +269,7 @@ namespace HealthTrackerTest.ServiceTests
             };
 
             // Action
-            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1));
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1, false));
 
             // Assert
             Assert.That(exception.Message, Is.EqualTo("No Ideal Value data found!"));
@@ -284,7 +284,7 @@ namespace HealthTrackerTest.ServiceTests
                 PreferenceId = 3,
                 value = float.Parse("1.5")
             };
-            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1);
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1, false);
             AddHealthLogInputDTO addHealthLogInputDTO2 = new AddHealthLogInputDTO()
             {
                 PreferenceId = 2,
@@ -292,7 +292,7 @@ namespace HealthTrackerTest.ServiceTests
             };
 
             // Action
-            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1));
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1, false));
 
             // Assert
             Assert.That(exception.Message, Is.EqualTo("No Ideal Value data found!"));
@@ -309,7 +309,7 @@ namespace HealthTrackerTest.ServiceTests
             };
 
             // Action
-            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1));
+            var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1, false));
 
             // Assert
             Assert.That(exception.Message, Is.EqualTo("No Ideal Value data found!"));
@@ -324,10 +324,10 @@ namespace HealthTrackerTest.ServiceTests
                 PreferenceId = 1,
                 value = 8
             };
-            await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1);
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1, false);
 
             // Action
-            var exception = Assert.ThrowsAsync<EntityAlreadyExistsException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1));
+            var exception = Assert.ThrowsAsync<EntityAlreadyExistsException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1, false));
 
             // Assert
             Assert.That(exception.Message, Is.EqualTo("Health Log already entered!"));
@@ -342,7 +342,7 @@ namespace HealthTrackerTest.ServiceTests
                 PreferenceId = 3,
                 value = float.Parse("1.5")
             };
-            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1);
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO1, 1, false);
             AddHealthLogInputDTO addHealthLogInputDTO2 = new AddHealthLogInputDTO()
             {
                 PreferenceId = 2,
@@ -350,7 +350,7 @@ namespace HealthTrackerTest.ServiceTests
             };
 
             // Action
-            var result = await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1);
+            var result = await HealthLogService.AddHealthLog(addHealthLogInputDTO2, 1, false);
 
             // Assert
             Assert.That(result.HealthStatus, Is.EqualTo("Fair"));
@@ -367,7 +367,7 @@ namespace HealthTrackerTest.ServiceTests
             };
 
             // Action
-            var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1));
+            var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1, false));
 
             // Assert
             Assert.That(exception.Message, Is.EqualTo("Height Log not entered"));
@@ -382,7 +382,7 @@ namespace HealthTrackerTest.ServiceTests
                 PreferenceId = 1,
                 value = 8
             };
-            await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1);
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1, false);
 
             addHealthLogInputDTO = new AddHealthLogInputDTO()
             {
@@ -391,7 +391,7 @@ namespace HealthTrackerTest.ServiceTests
             };
 
             // Action
-            var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1));
+            var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1, false));
 
             // Assert
             Assert.That(exception.Message, Is.EqualTo("Height Log not entered"));
@@ -406,7 +406,7 @@ namespace HealthTrackerTest.ServiceTests
                 PreferenceId = 3,
                 value = 150
             };
-            var result = await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1);
+            var result = await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1, false);
 
             // Assert
             Assert.That(result.HealthStatus, Is.EqualTo("No_Status"));
@@ -432,7 +432,7 @@ namespace HealthTrackerTest.ServiceTests
                 PreferenceId = 1,
                 value = 8
             };
-            await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1);
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1, false);
             var result = await HealthLogService.GetHealthLog(1, 1);
 
             // Assert
@@ -459,7 +459,7 @@ namespace HealthTrackerTest.ServiceTests
                 PreferenceId = 1,
                 value = 8
             };
-            await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1);
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1, false);
 
             // Action
             var result = await HealthLogService.GetHealthLog(1, 1);
@@ -491,7 +491,7 @@ namespace HealthTrackerTest.ServiceTests
             ;
 
             // Action
-            var result = await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1);
+            var result = await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1, false);
 
             // Assert
             Assert.That(result.TargetStatus, Is.Null);
@@ -506,7 +506,7 @@ namespace HealthTrackerTest.ServiceTests
                 PreferenceId = 1,
                 value = 8
             };
-            await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1);
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1, false);
 
             // Action
             var exception = Assert.ThrowsAsync<NoItemsFoundException>(async () => await HealthLogService.GetHealthLog(3, 1));
@@ -524,10 +524,10 @@ namespace HealthTrackerTest.ServiceTests
                 PreferenceId = 1,
                 value = 8
             };
-            await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1);
+            await HealthLogService.AddHealthLog(addHealthLogInputDTO, 1, false);
 
             // Action
-            var result = await HealthLogService.UpdateHealthLog(1, 9, 1);
+            var result = await HealthLogService.UpdateHealthLog(1, 9, 1, false);
 
             // Assert
             Assert.That(result.HealthStatus, Is.EqualTo("Fair"));
@@ -537,7 +537,7 @@ namespace HealthTrackerTest.ServiceTests
         public async Task UpdateHealthLogFailTest()
         {
             // Action
-            var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await HealthLogService.UpdateHealthLog(100, 9, 1));
+            var exception = Assert.ThrowsAsync<EntityNotFoundException>(async () => await HealthLogService.UpdateHealthLog(100, 9, 1, false));
         }
 
         [Test]

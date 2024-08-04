@@ -43,7 +43,7 @@ namespace HealthTracker.Controllers
                         if (claim.Type == "ID")
                             UserId = Convert.ToInt32(claim.Value);
                     }
-                    var result = await _HealthLogService.AddHealthLog(healthLogInputDTO, UserId);
+                    var result = await _HealthLogService.AddHealthLog(healthLogInputDTO, UserId, false);
                     return Ok(result);
                 }
                 catch (InvalidDataException ide)
@@ -122,7 +122,7 @@ namespace HealthTracker.Controllers
                         if (claim.Type == "ID")
                             UserId = Convert.ToInt32(claim.Value);
                     }
-                    var result = await _HealthLogService.UpdateHealthLog(logId, value, UserId);
+                    var result = await _HealthLogService.UpdateHealthLog(logId, value, UserId, false);
                     return Ok(result);
                 }
                 catch (InvalidDataException ide)

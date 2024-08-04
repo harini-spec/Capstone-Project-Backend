@@ -5,6 +5,7 @@ using HealthTracker.Models.DTOs.Target;
 using HealthTracker.Models.ENUMs;
 using HealthTracker.Repositories.Interfaces;
 using HealthTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Components.Forms;
 using System.Collections.Immutable;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -51,7 +52,7 @@ namespace HealthTracker.Services.Classes
             catch { throw; } 
         }
 
-        public async Task<AddHealthLogOutputDTO> AddHealthLog(AddHealthLogInputDTO healthLogInputDTO, int UserId)
+        public async Task<AddHealthLogOutputDTO> AddHealthLog(AddHealthLogInputDTO healthLogInputDTO, int UserId, bool isGFitData)
         {
             try
             {
@@ -65,21 +66,24 @@ namespace HealthTracker.Services.Classes
             }
             catch (NoItemsFoundException)
             {
-                try
+                if (!isGFitData)
                 {
-                    if (!await IsDataCorrect(healthLogInputDTO.PreferenceId, healthLogInputDTO.value))
+                    try
                     {
-                        throw new InvalidDataException("Height value is wrong!");
+                        if (!await IsDataCorrect(healthLogInputDTO.PreferenceId, healthLogInputDTO.value))
+                        {
+                            throw new InvalidDataException("Height value is wrong!");
+                        }
                     }
+                    catch { throw; }
                 }
-                catch { throw; }
 
                 HealthLog healthLog = new HealthLog();
                 healthLog.PreferenceId = healthLogInputDTO.PreferenceId;
                 healthLog.value = healthLogInputDTO.value;
                 healthLog.Created_at = DateTime.Now;
                 healthLog.Updated_at = DateTime.Now;
-                healthLog.HealthStatus = await calculateHealthStatus(healthLogInputDTO, UserId);
+                healthLog.HealthStatus = await calculateHealthStatus(healthLogInputDTO, UserId, isGFitData);
                 await _HealthLogRepository.Add(healthLog);
 
                 AddHealthLogOutputDTO healthLogOutputDTO = new AddHealthLogOutputDTO();
@@ -94,66 +98,6 @@ namespace HealthTracker.Services.Classes
             }
         }
 
-        public async Task<AddHealthLogOutputDTO> AddGFitHeightData(AddHealthLogInputDTO healthLogInputDTO, int UserId)
-        {
-            try
-            {
-                var healthlogs = await _HealthLogRepository.GetAll();
-                var filteredHealthLogs = healthlogs
-                    .Where(log => log.PreferenceId == healthLogInputDTO.PreferenceId && log.Created_at.Date == DateTime.Now.Date)
-                    .ToList();
-                if (filteredHealthLogs.Count != 0)
-                    throw new EntityAlreadyExistsException("Health Log already entered!");
-                else throw new NoItemsFoundException();
-            }
-            catch (NoItemsFoundException)
-            {
-                HealthLog healthLog = new HealthLog();
-                healthLog.PreferenceId = healthLogInputDTO.PreferenceId;
-                healthLog.value = healthLogInputDTO.value;
-                healthLog.Created_at = DateTime.Now;
-                healthLog.Updated_at = DateTime.Now;
-                healthLog.HealthStatus = await calculateHealthStatus(healthLogInputDTO, UserId);
-                await _HealthLogRepository.Add(healthLog);
-
-                AddHealthLogOutputDTO healthLogOutputDTO = new AddHealthLogOutputDTO();
-                healthLogOutputDTO.HealthLogId = healthLog.Id;
-                healthLogOutputDTO.HealthStatus = healthLog.HealthStatus.ToString();
-                try
-                {
-                    healthLogOutputDTO.TargetStatus = await _TargetService.calculateTargetStatus(healthLogInputDTO, UserId);
-                }
-                catch (NoItemsFoundException) { healthLogOutputDTO.TargetStatus = null; }
-                return healthLogOutputDTO;
-            }
-        }
-
-        public async Task<AddHealthLogOutputDTO> UpdateGFitHeightLog(int HealthLogId, float value, int UserId)
-        {
-            HealthLog log = null;
-            try
-            {
-                log = await _HealthLogRepository.GetById(HealthLogId);
-                log.value = value;
-                log.Updated_at = DateTime.Now;
-
-                AddHealthLogInputDTO healthLogInput = new AddHealthLogInputDTO();
-                healthLogInput.PreferenceId = log.PreferenceId;
-                healthLogInput.value = value;
-                log.HealthStatus = await calculateHealthStatus(healthLogInput, UserId);
-                await _HealthLogRepository.Update(log);
-
-                AddHealthLogOutputDTO healthLogOutputDTO = new AddHealthLogOutputDTO();
-                healthLogOutputDTO.HealthLogId = log.Id;
-                healthLogOutputDTO.HealthStatus = log.HealthStatus.ToString();
-                healthLogOutputDTO.TargetStatus = await _TargetService.calculateTargetStatus(healthLogInput, UserId);
-                return healthLogOutputDTO;
-            }
-            catch
-            {
-                throw;
-            }
-        }
 
         public async Task<GetHealthLogOutputDTO> GetHealthLog(int PrefId, int UserId)
         {
@@ -170,7 +114,7 @@ namespace HealthTracker.Services.Classes
             catch { throw; }
         }
 
-        public async Task<AddHealthLogOutputDTO> UpdateHealthLog(int HealthLogId, float value, int UserId)
+        public async Task<AddHealthLogOutputDTO> UpdateHealthLog(int HealthLogId, float value, int UserId, bool isGFitData)
         {
             HealthLog log = null;
             try
@@ -179,10 +123,23 @@ namespace HealthTracker.Services.Classes
                 log.value = value;
                 log.Updated_at = DateTime.Now;
 
+
+                if (!isGFitData)
+                {
+                    try
+                    {
+                        if (!await IsDataCorrect(log.PreferenceId, log.value))
+                        {
+                            throw new InvalidDataException("Height value is wrong!");
+                        }
+                    }
+                    catch { throw; }
+                }
+
                 AddHealthLogInputDTO healthLogInput = new AddHealthLogInputDTO();
                 healthLogInput.PreferenceId = log.PreferenceId;
                 healthLogInput.value = value;
-                log.HealthStatus = await calculateHealthStatus(healthLogInput, UserId);
+                log.HealthStatus = await calculateHealthStatus(healthLogInput, UserId, isGFitData);
                 await _HealthLogRepository.Update(log);
 
                 AddHealthLogOutputDTO healthLogOutputDTO = new AddHealthLogOutputDTO();
@@ -197,7 +154,33 @@ namespace HealthTracker.Services.Classes
             }
         }
 
-        private async Task<HealthStatusEnum.HealthStatus> calculateHealthStatus(AddHealthLogInputDTO healthlog, int UserId)
+        private async Task<string> AddBMIHealthLog(AddHealthLogInputDTO addHealthLogInputDTO, int UserId, bool isGFitData)
+        {
+            var prefId = 0;
+            try
+            {
+                prefId = await _MetricService.FindPreferenceIdFromMetricTypeAndUserId("BMI", UserId);
+            }
+            catch { throw new InvalidActionException("User has not set BMI as their preference"); }
+            if (addHealthLogInputDTO.value != 0)
+            {
+                try
+                {
+                    var ExistingLog = await GetHealthLog(prefId, UserId);
+                    await UpdateHealthLog(ExistingLog.Id, addHealthLogInputDTO.value, UserId, isGFitData);
+                }
+                catch (NoItemsFoundException)
+                {
+                    AddHealthLogInputDTO addHealthLog = new AddHealthLogInputDTO();
+                    addHealthLog.PreferenceId = prefId;
+                    addHealthLog.value = addHealthLogInputDTO.value;
+                    await AddHealthLog(addHealthLog, UserId, isGFitData);
+                }
+            }
+            return "BMI Successfully added!";
+        }
+
+        private async Task<HealthStatusEnum.HealthStatus> calculateHealthStatus(AddHealthLogInputDTO healthlog, int UserId, bool isGFitData)
         {
             try
             {
@@ -230,6 +213,15 @@ namespace HealthTracker.Services.Classes
 
                     var BMI = (healthlog.value / (heightlog.value * heightlog.value));
                     BMI_Val = BMI;
+
+                    AddHealthLogInputDTO addHealthLogInputDTO = new AddHealthLogInputDTO();
+                    addHealthLogInputDTO.value = BMI_Val;
+
+                    try
+                    {
+                        await AddBMIHealthLog(addHealthLogInputDTO, UserId, isGFitData);
+                    }
+                    catch { }
 
                     var BMIMetric = await _MetricService.FindMetricByMetricType("BMI");
                     MetricId = BMIMetric.Id;
@@ -273,23 +265,14 @@ namespace HealthTracker.Services.Classes
                         try
                         {
                             var ExistingLog = await GetHealthLog(prefId, UserId);
-                            if(inputdata.MetricType == "Height")
-                            {
-                                await UpdateGFitHeightLog(ExistingLog.Id, inputdata.Value, UserId);
-                            }
-                            await UpdateHealthLog(ExistingLog.Id, inputdata.Value, UserId);
+                            await UpdateHealthLog(ExistingLog.Id, inputdata.Value, UserId, true);
                         }
                         catch (NoItemsFoundException)
                         {
                             AddHealthLogInputDTO addHealthLog = new AddHealthLogInputDTO();
                             addHealthLog.PreferenceId = prefId;
                             addHealthLog.value = inputdata.Value;
-                            if (inputdata.MetricType == "Height")
-                            {
-                                await AddGFitHeightData(addHealthLog, UserId);
-                            }
-                            else
-                                await AddHealthLog(addHealthLog, UserId);
+                            await AddHealthLog(addHealthLog, UserId, true);
                         }
                     }
                     else continue;
