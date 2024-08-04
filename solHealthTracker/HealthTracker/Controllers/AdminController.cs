@@ -8,6 +8,7 @@ using HealthTracker.Models.DTOs.Coach;
 using System.Collections.Generic;
 using HealthTracker.Exceptions;
 using HealthTracker.Models.DBModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HealthTracker.Controllers
 {
@@ -23,6 +24,7 @@ namespace HealthTracker.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetAllInactiveCoaches")]
         [ProducesResponseType(typeof(List<GetCoachDataDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]

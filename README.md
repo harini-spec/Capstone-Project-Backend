@@ -167,3 +167,6 @@ ENUM Gender         - Female, Male, Others
 - I/P: UserId
 - Get coach ID from token 
 - O/P: List of suggestion DTOs
+
+### Admin:
+`GET/Get all inactive coaches`
