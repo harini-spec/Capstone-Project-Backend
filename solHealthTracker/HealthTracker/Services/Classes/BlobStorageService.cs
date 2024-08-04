@@ -14,9 +14,9 @@ namespace HealthTracker.Services.Classes
     public class BlobStorageService : IBlobStorageService
     {
         private readonly string _containerName;
-        private readonly IRepository<int, Certificate> _CertificateRepository;
+        private readonly IRepository<int, CoachCertificate> _CertificateRepository;
 
-        public BlobStorageService(IRepository<int, Certificate> CertificateRepository)
+        public BlobStorageService(IRepository<int, CoachCertificate> CertificateRepository)
         {
             _containerName = "healthsyncblob";
             _CertificateRepository = CertificateRepository;
@@ -49,7 +49,7 @@ namespace HealthTracker.Services.Classes
             // Upload the image stream to the blob
             await blobClient.UploadAsync(imageStream, true);
 
-            Certificate certificate = new Certificate();
+            CoachCertificate certificate = new CoachCertificate();
             certificate.CoachId = CoachId;
             certificate.CertificateURL = blobClient.Uri.ToString();
             await _CertificateRepository.Add(certificate);

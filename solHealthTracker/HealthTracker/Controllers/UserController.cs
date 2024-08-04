@@ -58,11 +58,11 @@ namespace HealthTracker.Controllers
         }
 
         [HttpPost("RegisterUser")]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<string>> Register(RegisterInputDTO userDTO)
+        public async Task<ActionResult<int>> Register(RegisterInputDTO userDTO)
         {
             if (ModelState.IsValid)
             {

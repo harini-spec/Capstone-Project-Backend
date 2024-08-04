@@ -104,7 +104,7 @@ namespace HealthTracker
             builder.Services.AddScoped<IRepository<int, UserDetail>, UserDetailRepository>();
             builder.Services.AddScoped<IRepository<int, UserPreference>, UserPreferenceRepository>();
             builder.Services.AddScoped<IRepository<int, OAuthAccessTokenModel>, OAuthAccessTokenRepository>();
-            builder.Services.AddScoped<IRepository<int, Certificate>, CertificateRepository>();
+            builder.Services.AddScoped<IRepository<int, CoachCertificate>, CertificateRepository>();
             #endregion
 
             #region services 

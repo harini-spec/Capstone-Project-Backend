@@ -100,7 +100,7 @@ namespace HealthTracker.Services.Classes
 
         #region Register User
 
-        public async Task<string> RegisterUser(RegisterInputDTO registerInputDTO)
+        public async Task<int> RegisterUser(RegisterInputDTO registerInputDTO)
         {
             // Checking for duplicate value - Email ID 
             var ExistingUser = await GetUserByEmail(registerInputDTO.Email);
@@ -123,7 +123,7 @@ namespace HealthTracker.Services.Classes
                 user.UserId = InsertedUserDetail.Id;
                 InsertedUser = await _userRepo.Add(user);
 
-                return "Registered Successfully!";
+                return InsertedUser.UserId;
             }
             catch (Exception)
             {

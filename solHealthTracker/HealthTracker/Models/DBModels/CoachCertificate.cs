@@ -2,7 +2,7 @@
 
 namespace HealthTracker.Models.DBModels
 {
-    public class Certificate
+    public class CoachCertificate
     {
         [Key]
         public int Id { get; set; }

@@ -19,7 +19,7 @@ namespace HealthTracker.Models
         public DbSet<UserDetail> UsersDetails { get; set; }
         public DbSet<UserPreference> UserPreferences { get; set; }
         public DbSet<OAuthAccessTokenModel> OAuthAccessTokenModels { get; set; }
-        public DbSet<Certificate> Certificates { get; set; }
+        public DbSet<CoachCertificate> CoachCertificates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
