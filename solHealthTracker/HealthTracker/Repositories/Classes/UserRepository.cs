@@ -11,11 +11,5 @@ namespace HealthTracker.Repositories.Classes
         public UserRepository(HealthTrackerContext context) : base(context)
         {
         }
-
-        public override async Task<List<User>> GetAll()
-        {
-            var items = _context.Users.Include(user => user.UserDetailsForUser);
-            return (List<User>)items;
-        }
     }
 }

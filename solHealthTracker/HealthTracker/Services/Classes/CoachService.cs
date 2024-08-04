@@ -10,11 +10,13 @@ namespace HealthTracker.Services.Classes
     {
         private readonly IRepository<int, User> _UserRepository;
         private readonly IRepository<int, CoachCertificate> _CoachCertificateRepository;
+        private readonly IRepository<int, UserDetail> _UserDetailRepository;
 
-        public CoachService(IRepository<int, User> userRepository, IRepository<int, CoachCertificate> coachCertificateRepository)
+        public CoachService(IRepository<int, User> userRepository, IRepository<int, CoachCertificate> coachCertificateRepository, IRepository<int, UserDetail> userDetailRepository)
         {
             _UserRepository = userRepository;
             _CoachCertificateRepository = coachCertificateRepository;
+            _UserDetailRepository = userDetailRepository;
         }
 
         public async Task<List<GetCoachDataDTO>> GetAllInactiveCoach()
@@ -22,7 +24,15 @@ namespace HealthTracker.Services.Classes
             try
             {
                 var users = await _UserRepository.GetAll();
-                var InactiveCoachList = users.Where(user => user.Role.ToString() == "Coach" && user.UserDetailsForUser.Status.ToString() == "Inactive");
+                var GetAllCoachList = users.Where(user => user.Role.ToString() == "Coach");
+                var InactiveCoachList = new List<User>();
+
+                foreach(var coach in GetAllCoachList)
+                {
+                    var userdetail = await _UserDetailRepository.GetById(coach.UserId);
+                    if (userdetail.Status.ToString() == "Inactive")
+                        InactiveCoachList.Add(coach);
+                }
                 if (InactiveCoachList.ToList().Count == 0)
                     throw new NoItemsFoundException("No Inactive coaches found!");
                 return await MapCoachDataToCoachDTO(InactiveCoachList.ToList());
