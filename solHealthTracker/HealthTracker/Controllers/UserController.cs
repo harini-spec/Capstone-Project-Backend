@@ -68,7 +68,7 @@ namespace HealthTracker.Controllers
             {
                 try
                 {
-                    string result = await _userService.RegisterUser(userDTO);
+                    int result = await _userService.RegisterUser(userDTO);
                     return Ok(result);
                 }
                 catch (UnableToRegisterException ure)

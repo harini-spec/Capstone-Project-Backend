@@ -22,7 +22,7 @@ namespace HealthTracker.Services.Interfaces
         /// <param name="Role">Coach/User</param>
         /// <returns>Registration status message</returns>
         #endregion
-        public Task<string> RegisterUser(RegisterInputDTO registerDTO);
+        public Task<int> RegisterUser(RegisterInputDTO registerDTO);
 
         #region Summary 
         /// <summary>
