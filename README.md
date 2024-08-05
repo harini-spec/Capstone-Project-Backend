@@ -1,5 +1,9 @@
 # Health Tracker Application:
 
+### Use Case:
+Health Tracker App:
+    Dashboard with the records of a week should be present. User can choose what to track. (BP, Sugar, Sleep)
+
 ### Installations:
 - Frontend:
 
@@ -26,7 +30,8 @@ EF Core - JWT Bearer
 EF Core - InMemory
 MOQ
 log4net
-MS log4net 
+MS log4net
+Azure AI TextAnalytics 
 ```
 
 <hr/>
