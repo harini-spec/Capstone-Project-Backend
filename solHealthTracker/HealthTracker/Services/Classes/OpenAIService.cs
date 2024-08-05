@@ -49,7 +49,7 @@ namespace HealthTracker.Services.Classes
                     new ChatMessage(ChatRole.Assistant, "Hello"),
                     new ChatMessage(ChatRole.User, prompt)
                 },
-                MaxTokens = 150
+                MaxTokens = 300
             };
 
             Response<ChatCompletions> response = await openAIClient.GetChatCompletionsAsync(deploymentOrModelName: "HealthSync", chatCompletionsOptions);
