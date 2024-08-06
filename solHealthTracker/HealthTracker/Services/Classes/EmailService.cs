@@ -16,7 +16,7 @@ namespace HealthTracker.Services.Classes
             var keyVaultName = "HealthSync";
             var kvUri = $"https://{keyVaultName}.vault.azure.net";
             var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
-            var jwt_secret = await client.GetSecretAsync("EmailID");
+            var jwt_secret = await client.GetSecretAsync("HealthSyncEmailID");
             var secret = jwt_secret.Value.Value;
             return secret;
         }
@@ -26,7 +26,7 @@ namespace HealthTracker.Services.Classes
             var keyVaultName = "HealthSync";
             var kvUri = $"https://{keyVaultName}.vault.azure.net";
             var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
-            var jwt_secret = await client.GetSecretAsync("EmailPass");
+            var jwt_secret = await client.GetSecretAsync("HealthSyncEmailPWD");
             var secret = jwt_secret.Value.Value;
             return secret;
         }

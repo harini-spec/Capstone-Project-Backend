@@ -31,7 +31,7 @@ EF Core - InMemory
 MOQ
 log4net
 MS log4net
-Azure AI TextAnalytics 
+Azure OpenAI 
 ```
 
 <hr/>
@@ -40,11 +40,19 @@ Azure AI TextAnalytics
 - Line Coverage: 75.7% 
 - Branch Coverage: 89%
 
+### Tech Stack:
+- Frontend: ReactJS
+- Backend: .Net
+- Database: SQL Server 
+- Email: OAuth
+
 ### Azure Services
 - Backend: App Service (Web App)
 - Frontend: App Service (Static Web App)
 - Storage: Storage account 
 - Database: SQL Databases
+- Secrets: Key Vault
+- ChatBot: Azure OpenAI API
 
 <hr/>
 
