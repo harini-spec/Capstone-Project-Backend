@@ -44,7 +44,7 @@ Azure OpenAI
 - Frontend: ReactJS
 - Backend: .Net
 - Database: SQL Server 
-- Email: OAuth
+- GFit: OAuth
 
 ### Azure Services
 - Backend: App Service (Web App)
